@@ -19,7 +19,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # Jazzmin
     'jazzmin',
 
     'django.contrib.admin',
@@ -126,6 +125,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #####################################--- MANUAL--CONFIGS ---##################################### 
+
+# User Model Auth
+AUTH_USER_MODEL = 'userauths.User'
 
 ####--Jazzmin--####
 # https://django-jazzmin.readthedocs.io/configuration/

@@ -6,3 +6,4 @@ django-cors-headers==4.3.1
 djangorestframework-simplejwt==5.3.1
 PyJWT==2.8.0
 django-jazzmin==2.6.0
+shortuuid==1.0.11
