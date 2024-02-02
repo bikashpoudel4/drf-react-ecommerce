@@ -1,0 +1,8 @@
+models.py", line 59, in save_user_profile
+    instance.profile.save()
+AttributeError: 'User' object has no attribute 'profile'
+
+Solution 
+changed to
+    - models.ForeignKey(User, on_delete=models.CASCADE)   ---TO----
+        - models.OneToOneField(User, on_delete=models.CASCADE)
