@@ -1,0 +1,16 @@
+asgiref==3.7.2
+backports.zoneinfo==0.2.1
+Django==4.2.9
+django-cors-headers==4.3.1
+django-filter==23.5
+django-jazzmin==2.6.0
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+importlib-metadata==7.0.1
+Markdown==3.5.2
+PyJWT==2.8.0
+pytz==2023.4
+sqlparse==0.4.4
+typing_extensions==4.9.0
+tzdata==2023.4
+zipp==3.17.0

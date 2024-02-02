@@ -1,0 +1,1 @@
+JAZZMIN: - https://django-jazzmin.readthedocs.io/configuration/
