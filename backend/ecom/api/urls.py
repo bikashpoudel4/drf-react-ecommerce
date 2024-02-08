@@ -6,4 +6,5 @@ from store import views as store_views
 
 urlpatterns = [
     path('user/token/', userauth_views.MyTokenObtainPairView.as_view()),
+    path('user/register/', userauth_views.RegisterView.as_view()),
 ]

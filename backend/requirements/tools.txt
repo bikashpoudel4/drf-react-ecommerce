@@ -1,2 +1,3 @@
 JAZZMIN: - https://django-jazzmin.readthedocs.io/configuration/
 djangorestframework_simple_JWT: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
+drf-yasg: https://pypi.org/project/drf-yasg/
