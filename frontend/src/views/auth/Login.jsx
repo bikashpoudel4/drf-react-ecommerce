@@ -40,23 +40,28 @@ function Login() {
             <h2>Welcome Back</h2>
             <p>Login To Continue</p>
             <form onSubmit={handleLogin}>
-                <input 
-                    type="text" 
-                    name="email" 
-                    id="email" 
-                    value={email} 
+                <input
+                    type="text"
+                    name="email"
+                    id="email"
+                    value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    />
+                />
                 <br />
-                <input 
-                    type="password" 
-                    name="password" 
-                    id="password" 
-                    value={password} 
+                <br />
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    />
+                />
+                <br />
+                <br />
 
-                    <button type="submit">Login</button>
+                <button type="submit">Login</button>
+                <hr/>
+                <Link to={'/forgot-password'}>Forgot Password</Link>
             </form>
         </div>
     );
