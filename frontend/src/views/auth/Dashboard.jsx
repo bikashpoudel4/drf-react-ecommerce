@@ -10,21 +10,28 @@ function Dashboard() {
 
     return (
         <>
-            {isLoggedIn()
-                ? <div>
-                    <h1>Dashboard</h1>
-                    {/* <Link to={`/logout`}>Logout</Link> */}
-                    <Link to={'/logout'}>Logout</Link>
-                </div> //if loggedin show dash
-
-                : <div>
-                    <h1>Home</h1>
-                    <Link to={'/register'}>Register</Link>
-                    <br />
-                    <Link to={'/login'}>Login</Link>
-                </div> // if not logged show home
+            {
+                isLoggedIn() ? (
+                    <div>
+                        <h1>Dashboard</h1>
+                        {/* <Link to={`/logout`}>Logout</Link> */}
+                        <Link to={"/logout"}>Logout</Link>
+                    </div> //if loggedin show dash
+                ) : (
+                    <div>
+                        <h1>Home Page</h1>
+                        <div className="d-flex">
+                            <Link className="btn btn-primary" to={"/register"}>
+                                Register
+                            </Link>
+                            <br />
+                            <Link className="btn btn-primary ms-4" to={"/login"}>
+                                Login
+                            </Link>
+                        </div>
+                    </div>
+                ) // if not logged show home
             }
-
         </>
     );
 }
