@@ -9,7 +9,10 @@ import ForgotPassword from "./views/auth/ForgotPassword";
 import CreatePassword from "./views/auth/CreatePassword";
 import StoreHeader from "./views/base/StoreHeader";
 import StoreFooter from "./views/base/StoreFooter";
+import Products from "./views/store/Products";
+
 // import MainWrapper from "./layout/MainWrapper"
+
 
 
 function App() {
@@ -25,7 +28,10 @@ function App() {
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/create-new-password" element={<CreatePassword />} />
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+
+                {/* STORE COMPONENTS */}
+                <Route path='/' element={<Products />} />
             </Routes>
         <StoreFooter/>
         </BrowserRouter>
