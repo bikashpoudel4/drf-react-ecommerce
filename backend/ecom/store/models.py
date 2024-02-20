@@ -67,11 +67,28 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def product_rating(self):
-        product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg("rating"))
-        return product_rating['avg_rating']
-    
+        product_rating = Review.objects.filter(product=self).aggregate(
+            avg_rating=models.Avg("rating")
+        )
+        return product_rating["avg_rating"]
+
+    def rating_count(self):
+        return Review.objects.filter(product=self).count()
+
+    def gallary(self):
+        return Gallary.objects.filter(product=self)
+
+    def specification(self):
+        return Specification.objects.filter(product=self)
+
+    def size(self):
+        return Size.objects.filter(product=self)
+
+    def color(self):
+        return Color.objects.filter(product=self)
+
     def save(self, *args, **kwarg):
         self.rating = self.product_rating()
         super(Product, self).save(*args, **kwarg)
@@ -242,14 +259,13 @@ class ProductFaq(models.Model):
 
 
 class Review(models.Model):
-    
+
     RATING = (
         (1, "1 Star"),
         (2, "2 Star"),
         (3, "3 Star"),
         (4, "4 Star"),
         (5, "5 Star"),
-        
     )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -260,7 +276,6 @@ class Review(models.Model):
     active = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
         return self.product.title
 
@@ -269,6 +284,7 @@ class Review(models.Model):
 
     def profile(self):
         return Profile.objects.get(user=self.user)
+
 
 @receiver(post_save, sender=Review)
 def update_product_rating(sender, instance, **kwargs):
@@ -280,7 +296,7 @@ class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.product.title
 
@@ -291,8 +307,12 @@ class Wishlist(models.Model):
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-    order = models.ForeignKey(CartOrder, on_delete=models.SET_NULL, null=True, blank=True)
-    order_item = models.ForeignKey(CartOrderItem, on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey(
+        CartOrder, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    order_item = models.ForeignKey(
+        CartOrderItem, on_delete=models.SET_NULL, null=True, blank=True
+    )
     seen = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 

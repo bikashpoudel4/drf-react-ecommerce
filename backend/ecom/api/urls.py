@@ -11,4 +11,8 @@ urlpatterns = [
     path('user/register/', userauth_views.RegisterView.as_view()),
     path('user/password-reset/<email>/', userauth_views.PasswordResetEmailVerify.as_view()),
     path('user/password-change/', userauth_views.PasswordChangeView.as_view(), name='password_reset'),
+
+    # Store Endpoints
+    path('category/', store_views.CategoryListAPIView.as_view()),
+    path('products/', store_views.ProductListAPIView.as_view()),
 ]
