@@ -15,6 +15,7 @@ from store.models import (
     Coupon,
     Notification,
     Wishlist,
+    Tax,
 )
 
 
@@ -151,3 +152,4 @@ admin.site.register(Review, ProductReviewAdmin)
 admin.site.register(Wishlist)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(Coupon, CouponAdmin)
+admin.site.register(Tax)
