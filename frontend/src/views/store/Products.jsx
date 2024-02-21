@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import apiInstance from "../../utils/axios";
+import { Link } from "react-router-dom";
 
 function Products() {
     const [products, setProducts] = useState([]);
@@ -25,23 +26,24 @@ function Products() {
                     <section className="text-center">
                         <div className="row">
                             {products?.map((p, index) => (
-                                <div className="col-lg-4 col-md-12 mb-4" key={p.id}>
-                                    {/* <div className="col-lg-4 col-md-12 mb-4"> */}
+                                <div className="col-lg-4 col-md-12 mb-4" key={index}>
                                     <div className="card">
                                         <div
                                             className="bg-image hover-zoom ripple"
                                             data-mdb-ripple-color="light"
                                         >
-                                            <img
-                                                src={p.image}
-                                                className="w-100"
-                                                style={{ width: "100%", height: "250px", objectFit: "cover" }}
-                                            />
+                                            <Link to={`/detail/${p.slug}/`}>
+                                                <img
+                                                    src={p.image}
+                                                    className="w-100"
+                                                    style={{ width: "100%", height: "250px", objectFit: "cover" }}
+                                                />
+                                            </Link>
                                         </div>
                                         <div className="card-body">
-                                            <a href="" className="text-reset">
+                                            <Link to={`/detail/${p.slug}/`} className="text-reset">
                                                 <h5 className="card-title mb-3">{p.title}</h5>
-                                            </a>
+                                            </Link>
                                             <a href="" className="text-reset">
                                                 <p>{p.category?.title}</p>
                                             </a>
@@ -140,37 +142,12 @@ function Products() {
 
                             <div className='row'>
                                 {category?.map((c, index) => (
-                                <div className="col-lg-2" key={c.id}>
-                                {/* <div className="col-lg-2"> */}
-                                    <img src={c.image} style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
-                                    <h6>{c.title}</h6>
-                                </div>
+                                    <div className="col-lg-2" key={index}>
+                                        {/* <div className="col-lg-2"> */}
+                                        <img src={c.image} style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
+                                        <h6>{c.title}</h6>
+                                    </div>
                                 ))}
-
-                                {/* <div className="col-lg-2">
-                                    <img src="https://darrensaines.no/wp-content/uploads/2020/02/dummy-1.png" style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
-                                    <h6>Category</h6>
-                                </div>
-
-                                <div className="col-lg-2">
-                                    <img src="https://darrensaines.no/wp-content/uploads/2020/02/dummy-1.png" style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
-                                    <h6>Category</h6>
-                                </div>
-
-                                <div className="col-lg-2">
-                                    <img src="https://darrensaines.no/wp-content/uploads/2020/02/dummy-1.png" style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
-                                    <h6>Category</h6>
-                                </div>
-
-                                <div className="col-lg-2">
-                                    <img src="https://darrensaines.no/wp-content/uploads/2020/02/dummy-1.png" style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
-                                    <h6>Category</h6>
-                                </div>
-
-                                <div className="col-lg-2">
-                                    <img src="https://darrensaines.no/wp-content/uploads/2020/02/dummy-1.png" style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
-                                    <h6>Category</h6> */}
-                                {/* </div> */}
                             </div>
 
                         </div>

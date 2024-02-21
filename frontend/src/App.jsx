@@ -10,6 +10,7 @@ import CreatePassword from "./views/auth/CreatePassword";
 import StoreHeader from "./views/base/StoreHeader";
 import StoreFooter from "./views/base/StoreFooter";
 import Products from "./views/store/Products";
+import ProductDetail from "./views/store/ProductDetail";
 
 // import MainWrapper from "./layout/MainWrapper"
 
@@ -32,6 +33,7 @@ function App() {
 
                 {/* STORE COMPONENTS */}
                 <Route path='/' element={<Products />} />
+                <Route path='/detail/:slug/' element={<ProductDetail />} />
             </Routes>
         <StoreFooter/>
         </BrowserRouter>

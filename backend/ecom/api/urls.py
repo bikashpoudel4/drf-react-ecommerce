@@ -6,6 +6,7 @@ from store import views as store_views
 
 
 urlpatterns = [
+    # User
     path('user/token/', userauth_views.MyTokenObtainPairView.as_view()),
     path('user/token/refresh/', TokenRefreshView.as_view()),
     path('user/register/', userauth_views.RegisterView.as_view()),
@@ -16,4 +17,6 @@ urlpatterns = [
     path('category/', store_views.CategoryListAPIView.as_view()),
     path('products/', store_views.ProductListAPIView.as_view()),
     path('products/<slug>/', store_views.ProductDetailAPIView.as_view()),
+    #Cart
+    path('cart-view/', store_views.CartAPIView.as_view()),
 ]
