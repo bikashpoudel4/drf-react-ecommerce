@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import apiInstance from "../../utils/axios";
-import { Link } from "react-router-dom";
+import GetCurrentAddress from "../plugin/UserCountry";
+import UserData from "../plugin/UserData";
+import CardID from "../plugin/CardID"
 
 function Products() {
     const [products, setProducts] = useState([]);
@@ -14,6 +17,10 @@ function Products() {
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [selectedColors, setSelectedColors] = useState({})
     const [selectedSize, setSelectedSize] = useState({})
+
+    const curretAddress = GetCurrentAddress()
+    const userData = UserData()
+    const cart_id = CardID()
 
     const handleColorButtonClick = (event, product_id, colorName) => {
         setColorValue(colorName)
@@ -38,6 +45,23 @@ function Products() {
     const handleQtyChange = (event, product_id) => {
         setQtyValue(event.target.value)
         setSelectedProduct(product_id)
+    }
+
+    const handleAddToCart = async (product_id, price, shipping_amount) => {
+        const formdata = new FormData()
+
+        formdata.append("product_id", product_id)
+        formdata.append("user_id", userData?.user_id)
+        formdata.append("qty", qtyValue)
+        formdata.append("price", price)
+        formdata.append("shipping_amount", shipping_amount)
+        formdata.append("country", curretAddress.country)
+        formdata.append("size", sizeValue)
+        formdata.append("color", colorValue)
+        formdata.append("cart_id", cart_id)
+
+        const response = await apiInstance.post(`cart-view/`, formdata)
+        console.log(response.data);
     }
 
 
@@ -105,10 +129,10 @@ function Products() {
                                                         <li className="p-1">
                                                             <b>Quantity</b>
                                                         </li>
-                                                        <div className="p-1 mt-0 pt-0 d-flex flex-wrap">                                                            
-                                                                <li>
-                                                                    <input className="form-control" onChange={(e) => handleQtyChange(e, p.id)} type="number" />
-                                                                </li>
+                                                        <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
+                                                            <li>
+                                                                <input className="form-control" onChange={(e) => handleQtyChange(e, p.id)} type="number" />
+                                                            </li>
                                                         </div>
                                                     </div>
 
@@ -151,6 +175,7 @@ function Products() {
                                                         <button
                                                             type="button"
                                                             className="btn btn-primary me-1 mb-1"
+                                                            onClick={() => handleAddToCart(p.id, p.price, p.shipping_amount)}
                                                         >
                                                             <i className="fas fa-shopping-cart" />
                                                         </button>
