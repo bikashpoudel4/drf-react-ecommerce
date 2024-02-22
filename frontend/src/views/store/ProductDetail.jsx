@@ -25,8 +25,8 @@ function ProductDetail() {
     const userData = UserData()
     const cart_id = CardID()
 
-    
-    
+
+
     useEffect(() => {
         apiInstance.get(`products/${param.slug}/`).then((res) => {
             setProduct(res.data)
@@ -53,16 +53,27 @@ function ProductDetail() {
         setQtyValue(event.target.value)
     };
 
-    const handleAddToCart = () => {
-        console.log("User ID: ",userData?.user_id);
-        console.log("Product Id: ", product.id);
-        console.log("Cart ID: ", cart_id);
-        console.log("Price: ", product.price);
-        console.log("Shippint Amount: ", product.shipping_amount);
-        console.log("Quantity: ", qtyValue);
-        console.log("Color: ", colorValue);
-        console.log("Size: ", sizeValue);
-        console.log("Country: ", curretAddress.country);
+    const handleAddToCart = async () => {
+        try {
+            const formdata = new FormData()
+
+            formdata.append("product_id", product.id)
+            formdata.append("user_id", userData?.user_id)
+            formdata.append("qty", qtyValue)
+            formdata.append("price", product.price)
+            formdata.append("shipping_amount", product.shipping_amount)
+            formdata.append("country", curretAddress.country)
+            formdata.append("size", sizeValue)
+            formdata.append("color", colorValue)
+            formdata.append("cart_id", cart_id)
+
+            const response = await apiInstance.post(`cart-view/`, formdata)
+            console.log(response.data);
+            
+        } catch (error) {
+            console.log(error);
+        }
+
     };
 
     return (
@@ -182,49 +193,49 @@ function ProductDetail() {
                                             </div>
                                             {/* Quantity */}
 
-                                             {/* Size */}
-                                             {size?.length > 0 ? (
-                                                    // Render something when the 'size' array has items
-                                                    <div className="col-md-6 mb-4">
-                                                        <div className="form-outline">
-                                                            <label className="form-label" htmlFor="typeNumber"><b>Size:</b> {sizeValue}</label>
-                                                        </div>
-                                                        <div className='d-flex'>
-                                                            {size?.map((s, index) => (
-                                                                <div key={index} className='me-2'>
-                                                                    <input type="hidden" className='size_name' value={s.name} />
-                                                                    <button onClick={handleSizeButtonClick} className='btn btn-secondary size_button'>{s.name}</button>
-                                                                </div>
-                                                            ))}
-                                                        </div>
+                                            {/* Size */}
+                                            {size?.length > 0 ? (
+                                                // Render something when the 'size' array has items
+                                                <div className="col-md-6 mb-4">
+                                                    <div className="form-outline">
+                                                        <label className="form-label" htmlFor="typeNumber"><b>Size:</b> {sizeValue}</label>
                                                     </div>
-                                                ) : (
-                                                    // Render empty div
-                                                    <div></div>
-                                                )}
-
-                                                {/* Colors */}
-                                                {color?.length > 0 ? (
-
-                                                    <div className="col-md-6 mb-4">
-                                                        <div className="form-outline">
-                                                            <label className="form-label" htmlFor="typeNumber"><b>Color:</b> <span>{colorValue}</span></label>
-                                                        </div>
-                                                        <div className='d-flex'>
-                                                            {color?.map((c, index) => (
-                                                                <div key={index}>
-                                                                    <input type="hidden" className='color_name' value={c.name} />
-                                                                    <input type="hidden" className='color_image' value={c.image} />
-                                                                    <button className='btn p-3 me-2 color_button' onClick={handleColorButtonClick} style={{ backgroundColor: `${c.color_code}` }}></button>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                        <hr />
+                                                    <div className='d-flex'>
+                                                        {size?.map((s, index) => (
+                                                            <div key={index} className='me-2'>
+                                                                <input type="hidden" className='size_name' value={s.name} />
+                                                                <button onClick={handleSizeButtonClick} className='btn btn-secondary size_button'>{s.name}</button>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                ) : (
-                                                    // Render empty div
-                                                    <div></div>
-                                                )}
+                                                </div>
+                                            ) : (
+                                                // Render empty div
+                                                <div></div>
+                                            )}
+
+                                            {/* Colors */}
+                                            {color?.length > 0 ? (
+
+                                                <div className="col-md-6 mb-4">
+                                                    <div className="form-outline">
+                                                        <label className="form-label" htmlFor="typeNumber"><b>Color:</b> <span>{colorValue}</span></label>
+                                                    </div>
+                                                    <div className='d-flex'>
+                                                        {color?.map((c, index) => (
+                                                            <div key={index}>
+                                                                <input type="hidden" className='color_name' value={c.name} />
+                                                                <input type="hidden" className='color_image' value={c.image} />
+                                                                <button className='btn p-3 me-2 color_button' onClick={handleColorButtonClick} style={{ backgroundColor: `${c.color_code}` }}></button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            ) : (
+                                                // Render empty div
+                                                <div></div>
+                                            )}
 
 
                                         </div>
