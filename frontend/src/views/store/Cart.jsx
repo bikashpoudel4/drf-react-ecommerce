@@ -8,7 +8,7 @@ import CardID from "../plugin/CardID"
 
 function Cart() {
     const [cart, setCart] = useState([])
-    console.log(cart);
+    const [cartTotal, setCartTotal] = useState([])
 
     const userData = UserData()
     const cart_id = CardID()
@@ -20,19 +20,29 @@ function Cart() {
         })
     }
 
+    const fetchCartTotal = (cartId, userId) => {
+        const url = userId ? `cart-detail/${cartId}/${userId}/` : `cart-detail/${cartId}/`
+        apiInstance.get(url).then((res) => {
+            setCartTotal(res.data)
+        })
+    }
+
     if (cart_id !== null || cart_id !== undefined) {
         if (userData !== undefined) {
             // send cart data with userId
             useEffect(() => {
                 fetchCartData(cart_id, userData.user_id);
+                fetchCartTotal(cart_id, userData.user_id);
             }, []);
         } else {
             // send cart data without userId but only cartId
             useEffect(() => {
                 fetchCartData(cart_id, null);
+                fetchCartTotal(cart_id, null);
             }, []);
         }
     }
+    console.log(cartTotal);
 
     return (
         <main className="mt-5">
@@ -242,24 +252,24 @@ function Cart() {
                                         <h5 className="mb-3">Cart Summary</h5>
                                         <div className="d-flex justify-content-between mb-3">
                                             <span>Subtotal </span>
-                                            <span>$10.00</span>
+                                            <span>${cartTotal.sub_total?.toFixed(2)}</span>
                                         </div>
                                         <div className="d-flex justify-content-between">
                                             <span>Shipping </span>
-                                            <span>$10.00</span>
+                                            <span>${cartTotal.shipping?.toFixed(2)}</span>
                                         </div>
                                         <div className="d-flex justify-content-between">
                                             <span>Tax </span>
-                                            <span>$10.00</span>
+                                            <span>${cartTotal.tax?.toFixed(2)}</span>
                                         </div>
                                         <div className="d-flex justify-content-between">
                                             <span>Servive Fee </span>
-                                            <span>$10.00</span>
+                                            <span>${cartTotal.service_fee?.toFixed(2)}</span>
                                         </div>
                                         <hr className="my-4" />
                                         <div className="d-flex justify-content-between fw-bold mb-5">
                                             <span>Total </span>
-                                            <span>$10.00</span>
+                                            <span>${cartTotal.total?.toFixed(2)}</span>
                                         </div>
                                         <button className="btn btn-primary btn-rounded w-100" >
                                             Proceed to Checkout <i className='fas fa-arrow-right ms-2'></i>
