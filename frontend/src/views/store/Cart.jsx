@@ -9,11 +9,11 @@ import GetCurrentAddress from '../plugin/UserCountry';
 
 
 const Toast = Swal.mixin({
-    toast:true,
-    position:"top",
-    showConfirmButton:false,
-    timer:1500,
-    timerProgressBar:true
+    toast: true,
+    position: "top",
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true
 })
 
 function Cart() {
@@ -54,7 +54,7 @@ function Cart() {
             }, []);
         }
     }
-    
+
     useEffect(() => {
         const initialQuantities = {}
         cart.forEach((c) => {
@@ -67,7 +67,7 @@ function Cart() {
         const quantity = event.target.value
         setProductQuantities((prevQuantities) => ({
             ...prevQuantities,
-            [product_id]:quantity
+            [product_id]: quantity
         }))
     }
 
@@ -95,6 +95,26 @@ function Cart() {
             icon: "success",
             title: response.data.message,
         })
+    }
+
+    const handleDeleteCartItem = async (itemId) => {
+        const url = userData?.user_id
+            ? `cart-delete/${cart_id}/${itemId}/${userData?.user_id}/`
+            : `cart-delete/${cart_id}/${itemId}/`
+
+        try {
+            await apiInstance.delete(url)
+
+            fetchCartData(cart_id, userData?.user_id);
+            fetchCartTotal(cart_id, userData?.user_id);
+
+            Toast.fire({
+                icon: "success",
+                title: "Item Removed from Cart"
+            })
+        } catch(error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -164,7 +184,7 @@ function Cart() {
                                                 </p> */}
 
                                                     <p className="mt-3">
-                                                        <button className="btn btn-danger ">
+                                                        <button onClick={() => handleDeleteCartItem(c.id)} className="btn btn-danger ">
                                                             <small><i className="fas fa-trash me-2" />Remove</small>
                                                         </button>
                                                     </p>
@@ -196,6 +216,7 @@ function Cart() {
                                         {cart.length < 1 &&
                                             <h5>Your Cart Is Empty</h5>
                                         }
+                                        <hr />
                                         <Link to='/' className='btn btn-primary'> <i className='fas fa-shopping-cart'></i> Continue Shopping</Link>
 
 
