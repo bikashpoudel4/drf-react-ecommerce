@@ -9,6 +9,7 @@ import CardID from "../plugin/CardID"
 function Cart() {
     const [cart, setCart] = useState([])
     const [cartTotal, setCartTotal] = useState([])
+    const [productQuantities, setProductQuantities] = useState('')
 
     const userData = UserData()
     const cart_id = CardID()
@@ -42,7 +43,25 @@ function Cart() {
             }, []);
         }
     }
-    console.log(cartTotal);
+    
+    useEffect(() => {
+        const initialQuantities = {}
+        cart.forEach((c) => {
+            initialQuantities[c.product?.id] = c.qty
+        })
+        setProductQuantities(initialQuantities)
+    }, [cart])
+
+    const handleQuantutyChange = (event, product_id) => {
+        const quantity = event.target.value
+        console.log(quantity);
+        console.log(product_id);
+
+        setProductQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [product_id]:quantity
+        }))
+    }
 
     return (
         <main className="mt-5">
@@ -123,12 +142,12 @@ function Cart() {
                                                             <input
                                                                 type="number"
                                                                 className="form-control"
-                                                                value={c.qty}
+                                                                value={productQuantities[c.product?.id] || c.qty}
                                                                 min={1}
-
+                                                                onChange={(e) => handleQuantutyChange(e, c.product.id)}
                                                             />
                                                         </div>
-                                                        <button className='ms-2 btn btn-primary'><i className='fas fa-rotate-right'></i></button>
+                                                        <button onClick={handleQuantutyChange} className='ms-2 btn btn-primary'><i className='fas fa-rotate-right'></i></button>
                                                     </div>
                                                     {/* <h5 className="mb-2 mt-3 text-center"><span className="align-middle">$100.00</span></h5> */}
                                                     <h5 className="mb-2 mt-3"><span className="align-middle">$100.00</span></h5>
