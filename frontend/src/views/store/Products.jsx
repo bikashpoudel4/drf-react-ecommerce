@@ -27,7 +27,7 @@ function Products() {
     const [selectedColors, setSelectedColors] = useState({})
     const [selectedSize, setSelectedSize] = useState({})
 
-    const curretAddress = GetCurrentAddress()
+    const currentAddress = GetCurrentAddress()
     const userData = UserData()
     const cart_id = CardID()
 
@@ -64,7 +64,7 @@ function Products() {
         formdata.append("qty", qtyValue)
         formdata.append("price", price)
         formdata.append("shipping_amount", shipping_amount)
-        formdata.append("country", curretAddress.country)
+        formdata.append("country", currentAddress.country)
         formdata.append("size", sizeValue)
         formdata.append("color", colorValue)
         formdata.append("cart_id", cart_id)

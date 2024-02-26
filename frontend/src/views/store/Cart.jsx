@@ -1,10 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiInstance from '../../utils/axios';
+import Swal from 'sweetalert2';
 
 import UserData from "../plugin/UserData";
 import CardID from "../plugin/CardID"
+import GetCurrentAddress from '../plugin/UserCountry';
 
+
+const Toast = Swal.mixin({
+    toast:true,
+    position:"top",
+    showConfirmButton:false,
+    timer:1500,
+    timerProgressBar:true
+})
 
 function Cart() {
     const [cart, setCart] = useState([])
@@ -13,6 +23,7 @@ function Cart() {
 
     const userData = UserData()
     const cart_id = CardID()
+    const currentAddress = GetCurrentAddress()
 
     const fetchCartData = (cartId, userId) => {
         const url = userId ? `cart-list/${cartId}/${userId}/` : `cart-list/${cartId}/`
@@ -32,8 +43,8 @@ function Cart() {
         if (userData !== undefined) {
             // send cart data with userId
             useEffect(() => {
-                fetchCartData(cart_id, userData.user_id);
-                fetchCartTotal(cart_id, userData.user_id);
+                fetchCartData(cart_id, userData?.user_id);
+                fetchCartTotal(cart_id, userData?.user_id);
             }, []);
         } else {
             // send cart data without userId but only cartId
@@ -54,13 +65,36 @@ function Cart() {
 
     const handleQuantutyChange = (event, product_id) => {
         const quantity = event.target.value
-        console.log(quantity);
-        console.log(product_id);
-
         setProductQuantities((prevQuantities) => ({
             ...prevQuantities,
             [product_id]:quantity
         }))
+    }
+
+    const updateCart = async (product_id, price, shipping_amount, color, size) => {
+        const qtyValue = productQuantities[product_id]
+        const formdata = new FormData()
+
+        formdata.append("product_id", product_id)
+        formdata.append("user_id", userData?.user_id)
+        formdata.append("qty", qtyValue)
+        formdata.append("price", price)
+        formdata.append("shipping_amount", shipping_amount)
+        formdata.append("country", currentAddress.country)
+        formdata.append("size", size)
+        formdata.append("color", color)
+        formdata.append("cart_id", cart_id)
+
+        const response = await apiInstance.post('cart-view/', formdata)
+        console.log(response.data);
+
+        fetchCartData(cart_id, userData?.user_id);
+        fetchCartTotal(cart_id, userData?.user_id);
+
+        Toast.fire({
+            icon: "success",
+            title: response.data.message,
+        })
     }
 
     return (
@@ -147,10 +181,10 @@ function Cart() {
                                                                 onChange={(e) => handleQuantutyChange(e, c.product.id)}
                                                             />
                                                         </div>
-                                                        <button onClick={handleQuantutyChange} className='ms-2 btn btn-primary'><i className='fas fa-rotate-right'></i></button>
+                                                        <button onClick={() => updateCart(c.product.id, c.product.price, c.product.shipping_amount, c.color, c.size)} className='ms-2 btn btn-primary'><i className='fas fa-rotate-right'></i></button>
                                                     </div>
                                                     {/* <h5 className="mb-2 mt-3 text-center"><span className="align-middle">$100.00</span></h5> */}
-                                                    <h5 className="mb-2 mt-3"><span className="align-middle">$100.00</span></h5>
+                                                    <h5 className="mb-2 mt-3"><span className="align-middle">${c.sub_total}</span></h5>
 
                                                     <p className='text-dark'>
                                                         <small>Sub Total</small>
