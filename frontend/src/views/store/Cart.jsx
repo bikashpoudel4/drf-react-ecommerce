@@ -21,6 +21,17 @@ function Cart() {
     const [cartTotal, setCartTotal] = useState([])
     const [productQuantities, setProductQuantities] = useState('')
 
+    // Shipping Address - Personal Info
+    const [fullName, setFullName] = useState('')
+    const [email, setEmail] = useState('')
+    const [mobile, setMobile] = useState('')
+
+    const [address, setAddress] = useState('')
+    const [city, setCity] = useState('')
+    const [state, setState] = useState('')
+    const [country, setCountry] = useState('')    
+    // Shipping Address - Personal Info
+
     const userData = UserData()
     const cart_id = CardID()
     const currentAddress = GetCurrentAddress()
@@ -115,6 +126,53 @@ function Cart() {
         } catch(error) {
             console.log(error);
         }
+    }
+
+    const handleChange = (event) =>{
+        const {name, value} = event.target
+
+        switch(name){
+            case 'fullName':
+                setFullName(value)
+                break
+                
+            case 'email':
+                setEmail(value)
+                break
+
+            case 'mobile':
+                setMobile(value)
+                break
+
+            case 'address':
+                setAddress(value)
+                break
+
+            case 'city':
+                setCity(value)
+                break
+
+            case 'state':
+                setState(value)
+                break
+
+            case 'country':
+                setCountry(value)
+                break
+            
+                default:
+                    break
+        }
+    }
+
+    const createOrder = () => {
+        console.log(fullName);
+        console.log(email);
+        console.log(mobile);
+        console.log(address);
+        console.log(city);
+        console.log(state);
+        console.log(country);
     }
 
     return (
@@ -216,14 +274,15 @@ function Cart() {
                                         {cart.length < 1 &&
                                             <h5>Your Cart Is Empty</h5>
                                         }
-                                        <hr />
+                                        {/* <hr className='shadow' /> */}
                                         <Link to='/' className='btn btn-primary'> <i className='fas fa-shopping-cart'></i> Continue Shopping</Link>
 
 
                                         {/* Personal info */}
                                     </section>
                                     {cart?.length > 0 &&
-                                        <form>
+                                        // <form>
+                                        <div>
                                             <h5 className="mb-4 mt-4">Personal Information</h5>
                                             {/* 2 column grid layout with text inputs for the first and last names */}
                                             <div className="row mb-4">
@@ -233,8 +292,11 @@ function Cart() {
                                                         <input
                                                             type="text"
                                                             id=""
-                                                            name='fullName'
                                                             className="form-control"
+                                                            placeholder="Enter your full name"
+                                                            name='fullName'
+                                                            onChange={handleChange}
+                                                            value={fullName}
                                                         />
                                                     </div>
                                                 </div>
@@ -250,7 +312,9 @@ function Cart() {
                                                             id="form6Example1"
                                                             className="form-control"
                                                             name='email'
-
+                                                            onChange={handleChange}
+                                                            value={email}
+                                                            placeholder="emample@example.com"
                                                         />
                                                     </div>
                                                 </div>
@@ -262,6 +326,9 @@ function Cart() {
                                                             id="form6Example1"
                                                             className="form-control"
                                                             name='mobile'
+                                                            onChange={handleChange}
+                                                            value={mobile}
+                                                            placeholder="Enter your mobile number"
                                                         />
                                                     </div>
                                                 </div>
@@ -278,6 +345,9 @@ function Cart() {
                                                             id="form6Example1"
                                                             className="form-control"
                                                             name='address'
+                                                            onChange={handleChange}
+                                                            value={address}
+                                                            placeholder="Street House number"
                                                         />
                                                     </div>
                                                 </div>
@@ -289,6 +359,9 @@ function Cart() {
                                                             id="form6Example1"
                                                             className="form-control"
                                                             name='city'
+                                                            onChange={handleChange}
+                                                            value={city}
+                                                            placeholder="Enter your City"
                                                         />
                                                     </div>
                                                 </div>
@@ -301,6 +374,9 @@ function Cart() {
                                                             id="form6Example1"
                                                             className="form-control"
                                                             name='state'
+                                                            onChange={handleChange}
+                                                            value={state}
+                                                            placeholder="Enter your State"
                                                         />
                                                     </div>
                                                 </div>
@@ -312,11 +388,15 @@ function Cart() {
                                                             id="form6Example1"
                                                             className="form-control"
                                                             name='country'
+                                                            onChange={handleChange}
+                                                            value={country}
+                                                            placeholder="Enter your Country"
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
+                                        {/* </form> */}
+                                        </div>
                                     }
 
                                 </div>
@@ -345,7 +425,7 @@ function Cart() {
                                             <span>Total </span>
                                             <span>${cartTotal.total?.toFixed(2)}</span>
                                         </div>
-                                        <button className="btn btn-primary btn-rounded w-100" >
+                                        <button onClick={createOrder} className="btn btn-primary btn-rounded w-100" >
                                             Proceed to Checkout <i className='fas fa-arrow-right ms-2'></i>
                                         </button>
                                     </section>
