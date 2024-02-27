@@ -250,11 +250,14 @@ class CreateOrderAPIView(generics.CreateAPIView):
         country = payload['country']
         cart_id = payload['cart_id']
         user_id = payload['user_id']
+        print("user_id----------", user_id)
 
-        if user_id !=0:
+        try:
             user = User.objects.get(id=user_id)
-        else:
+        except:
             user = None
+        
+        print("user----", user)
         
         cart_items = Cart.objects.filter(cart_id=cart_id)
 
@@ -266,6 +269,7 @@ class CreateOrderAPIView(generics.CreateAPIView):
         total_total = Decimal(0.00)
 
         order = CartOrder.objects.create(
+            buyer=user,
             full_name=full_name,
             email=email,
             mobile=mobile,

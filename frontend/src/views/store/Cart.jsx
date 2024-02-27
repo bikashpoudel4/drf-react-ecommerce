@@ -29,7 +29,7 @@ function Cart() {
     const [address, setAddress] = useState('')
     const [city, setCity] = useState('')
     const [state, setState] = useState('')
-    const [country, setCountry] = useState('')    
+    const [country, setCountry] = useState('')
     // Shipping Address - Personal Info
 
     const userData = UserData()
@@ -123,19 +123,19 @@ function Cart() {
                 icon: "success",
                 title: "Item Removed from Cart"
             })
-        } catch(error) {
+        } catch (error) {
             console.log(error);
         }
     }
 
-    const handleChange = (event) =>{
-        const {name, value} = event.target
+    const handleChange = (event) => {
+        const { name, value } = event.target
 
-        switch(name){
+        switch (name) {
             case 'fullName':
                 setFullName(value)
                 break
-                
+
             case 'email':
                 setEmail(value)
                 break
@@ -159,20 +159,34 @@ function Cart() {
             case 'country':
                 setCountry(value)
                 break
-            
-                default:
-                    break
+
+            default:
+                break
         }
     }
 
-    const createOrder = () => {
-        console.log(fullName);
-        console.log(email);
-        console.log(mobile);
-        console.log(address);
-        console.log(city);
-        console.log(state);
-        console.log(country);
+    const createOrder = async () => {
+        if (!fullName || !email || !mobile || !address || !city || !state || !country) {
+            Swal.fire({
+                icon: 'warning',
+                title: "Missing Fields!",
+                text: "All fields are required before checkout"
+            })
+        }
+        const formdata = new FormData()
+        formdata.append("full_name", fullName)
+        formdata.append("email", email)
+        formdata.append("mobile", mobile)
+        formdata.append("address", address)
+        formdata.append("city", city)
+        formdata.append("state", state)
+        formdata.append("country", country)
+        formdata.append("cart_id", cart_id)
+        formdata.append("user_id", userData ? userData?.user_id : 0)
+
+        const response = await apiInstance.post('create-order/', formdata)
+        console.log(response.data.message);
+        console.log(response.data.order_oid);
     }
 
     return (
@@ -395,7 +409,7 @@ function Cart() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        {/* </form> */}
+                                            {/* </form> */}
                                         </div>
                                     }
 
