@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiInstance from '../../utils/axios';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom'
 
 import UserData from "../plugin/UserData";
 import CardID from "../plugin/CardID"
@@ -35,6 +36,7 @@ function Cart() {
     const userData = UserData()
     const cart_id = CardID()
     const currentAddress = GetCurrentAddress()
+    const navigate = useNavigate()
 
     const fetchCartData = (cartId, userId) => {
         const url = userId ? `cart-list/${cartId}/${userId}/` : `cart-list/${cartId}/`
@@ -172,81 +174,88 @@ function Cart() {
                 title: "Missing Fields!",
                 text: "All fields are required before checkout"
             })
-        }
-        const formdata = new FormData()
-        formdata.append("full_name", fullName)
-        formdata.append("email", email)
-        formdata.append("mobile", mobile)
-        formdata.append("address", address)
-        formdata.append("city", city)
-        formdata.append("state", state)
-        formdata.append("country", country)
-        formdata.append("cart_id", cart_id)
-        formdata.append("user_id", userData ? userData?.user_id : 0)
+        } else {
 
-        const response = await apiInstance.post('create-order/', formdata)
-        console.log(response.data.message);
-        console.log(response.data.order_oid);
+            try {
+                const formdata = new FormData()
+                formdata.append("full_name", fullName)
+                formdata.append("email", email)
+                formdata.append("mobile", mobile)
+                formdata.append("address", address)
+                formdata.append("city", city)
+                formdata.append("state", state)
+                formdata.append("country", country)
+                formdata.append("cart_id", cart_id)
+                formdata.append("user_id", userData ? userData?.user_id : 0)
+
+                const response = await apiInstance.post('create-order/', formdata)
+
+                navigate(`/checkout/${response.data.order_oid}/`)
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 
     return (
-        <main className="mt-5">
-            <div className="container">
-                <main className="mb-6">
-                    <div className="container">
-                        <section className="">
-                            <div className="row gx-lg-5 mb-5">
-                                <div className="col-lg-8 mb-4 mb-md-0">
-                                    {/* Single Product List */}
-                                    <section className="mb-5">
+        <div>
+            <main className="mt-5">
+                <div className="container">
+                    <main className="mb-6">
+                        <div className="container">
+                            <section className="">
+                                <div className="row gx-lg-5 mb-5">
+                                    <div className="col-lg-8 mb-4 mb-md-0">
+                                        {/* Single Product List */}
+                                        <section className="mb-5">
 
-                                        {cart?.map((c, index) =>
-                                            <div className="row border-bottom mb-4" key={index}>
-                                                <div className="col-md-2 mb-4 mb-md-0">
-                                                    <div
-                                                        className="bg-image ripple rounded-5 mb-4 overflow-hidden d-block"
-                                                        data-ripple-color="light"
-                                                    >
-                                                        <Link to=''>
-                                                            <img
-                                                                src={c.product?.image}
-                                                                className="w-100"
-                                                                alt=""
-                                                                style={{ width: "100%", height: "100px", objectFit: "cover", borderRadius: "10px" }}
-                                                            />
-                                                        </Link>
-                                                        <a href="#!">
-                                                            <div className="hover-overlay">
-                                                                <div
-                                                                    className="mask"
-                                                                    style={{
-                                                                        backgroundColor: "hsla(0, 0%, 98.4%, 0.2)"
-                                                                    }}
+                                            {cart?.map((c, index) =>
+                                                <div className="row border-bottom mb-4" key={index}>
+                                                    <div className="col-md-2 mb-4 mb-md-0">
+                                                        <div
+                                                            className="bg-image ripple rounded-5 mb-4 overflow-hidden d-block"
+                                                            data-ripple-color="light"
+                                                        >
+                                                            <Link to=''>
+                                                                <img
+                                                                    src={c.product?.image}
+                                                                    className="w-100"
+                                                                    alt=""
+                                                                    style={{ width: "100%", height: "100px", objectFit: "cover", borderRadius: "10px" }}
                                                                 />
-                                                            </div>
-                                                        </a>
+                                                            </Link>
+                                                            <a href="#!">
+                                                                <div className="hover-overlay">
+                                                                    <div
+                                                                        className="mask"
+                                                                        style={{
+                                                                            backgroundColor: "hsla(0, 0%, 98.4%, 0.2)"
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="col-md-8 mb-4 mb-md-0">
-                                                    <Link to={null} className="fw-bold text-dark mb-4">{c.product?.title}</Link>
-                                                    {c.size !== "No Size" &&
-                                                        <p className="mb-0">
-                                                            <span className="text-muted me-2">Size:</span>
-                                                            <span>{c.size}</span>
-                                                        </p>
-                                                    }
-                                                    {c.color !== "No Color" &&
+                                                    <div className="col-md-8 mb-4 mb-md-0">
+                                                        <Link to={null} className="fw-bold text-dark mb-4">{c.product?.title}</Link>
+                                                        {c.size !== "No Size" &&
+                                                            <p className="mb-0">
+                                                                <span className="text-muted me-2">Size:</span>
+                                                                <span>{c.size}</span>
+                                                            </p>
+                                                        }
+                                                        {c.color !== "No Color" &&
+                                                            <p className='mb-0'>
+                                                                <span className="text-muted me-2">Color:</span>
+                                                                <span>{c.color}</span>
+                                                            </p>
+                                                        }
                                                         <p className='mb-0'>
-                                                            <span className="text-muted me-2">Color:</span>
-                                                            <span>{c.color}</span>
+                                                            <span className="text-muted me-2">Price:</span>
+                                                            <span>${c.price}</span>
                                                         </p>
-                                                    }
-                                                    <p className='mb-0'>
-                                                        <span className="text-muted me-2">Price:</span>
-                                                        <span>${c.price}</span>
-                                                    </p>
 
-                                                    {/* <p className='mb-0'>
+                                                        {/* <p className='mb-0'>
                                                     <span className="text-muted me-2">Stock Qty:</span>
                                                     <span>3</span>
                                                 </p>
@@ -255,224 +264,224 @@ function Cart() {
                                                     <span>Desphixs</span>
                                                 </p> */}
 
-                                                    <p className="mt-3">
-                                                        <button onClick={() => handleDeleteCartItem(c.id)} className="btn btn-danger ">
-                                                            <small><i className="fas fa-trash me-2" />Remove</small>
-                                                        </button>
-                                                    </p>
+                                                        <p className="mt-3">
+                                                            <button onClick={() => handleDeleteCartItem(c.id)} className="btn btn-danger ">
+                                                                <small><i className="fas fa-trash me-2" />Remove</small>
+                                                            </button>
+                                                        </p>
+                                                    </div>
+                                                    <div className="col-md-2 mb-4 mb-md-0">
+                                                        <div className="d-flex justify-content-center align-items-center">
+                                                            <div className="form-outline">
+                                                                {/* <label className='form-label' htmlFor='typeNumber'>Quantity</label> */}
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    value={productQuantities[c.product?.id] || c.qty}
+                                                                    min={1}
+                                                                    onChange={(e) => handleQuantutyChange(e, c.product.id)}
+                                                                />
+                                                            </div>
+                                                            <button onClick={() => updateCart(c.product.id, c.product.price, c.product.shipping_amount, c.color, c.size)} className='ms-2 btn btn-primary'><i className='fas fa-rotate-right'></i></button>
+                                                        </div>
+                                                        {/* <h5 className="mb-2 mt-3 text-center"><span className="align-middle">$100.00</span></h5> */}
+                                                        <h5 className="mb-2 mt-3"><span className="align-middle">${c.sub_total}</span></h5>
+
+                                                        <p className='text-dark'>
+                                                            <small>Sub Total</small>
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="col-md-2 mb-4 mb-md-0">
-                                                    <div className="d-flex justify-content-center align-items-center">
+                                            )}
+
+                                            {cart.length < 1 &&
+                                                <h5>Your Cart Is Empty</h5>
+                                            }
+                                            {/* <hr className='shadow' /> */}
+                                            <Link to='/' className='btn btn-primary'> <i className='fas fa-shopping-cart'></i> Continue Shopping</Link>
+
+
+                                            {/* Personal info */}
+                                        </section>
+                                        {cart?.length > 0 &&
+                                            // <form>
+                                            <div>
+                                                <h5 className="mb-4 mt-4">Personal Information</h5>
+                                                {/* 2 column grid layout with text inputs for the first and last names */}
+                                                <div className="row mb-4">
+                                                    <div className="col">
                                                         <div className="form-outline">
-                                                            {/* <label className='form-label' htmlFor='typeNumber'>Quantity</label> */}
+                                                            <label className="form-label" htmlFor="full_name"> <i className='fas fa-user'></i> Full Name</label>
                                                             <input
-                                                                type="number"
+                                                                type="text"
+                                                                id=""
                                                                 className="form-control"
-                                                                value={productQuantities[c.product?.id] || c.qty}
-                                                                min={1}
-                                                                onChange={(e) => handleQuantutyChange(e, c.product.id)}
+                                                                placeholder="Enter your full name"
+                                                                name='fullName'
+                                                                onChange={handleChange}
+                                                                value={fullName}
                                                             />
                                                         </div>
-                                                        <button onClick={() => updateCart(c.product.id, c.product.price, c.product.shipping_amount, c.color, c.size)} className='ms-2 btn btn-primary'><i className='fas fa-rotate-right'></i></button>
                                                     </div>
-                                                    {/* <h5 className="mb-2 mt-3 text-center"><span className="align-middle">$100.00</span></h5> */}
-                                                    <h5 className="mb-2 mt-3"><span className="align-middle">${c.sub_total}</span></h5>
 
-                                                    <p className='text-dark'>
-                                                        <small>Sub Total</small>
-                                                    </p>
                                                 </div>
-                                            </div>
-                                        )}
 
-                                        {cart.length < 1 &&
-                                            <h5>Your Cart Is Empty</h5>
+                                                <div className="row mb-4">
+                                                    <div className="col">
+                                                        <div className="form-outline">
+                                                            <label className="form-label" htmlFor="form6Example1"><i className='fas fa-envelope'></i> Email</label>
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                className="form-control"
+                                                                name='email'
+                                                                onChange={handleChange}
+                                                                value={email}
+                                                                placeholder="emample@example.com"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="col">
+                                                        <div className="form-outline">
+                                                            <label className="form-label" htmlFor="form6Example1"><i className='fas fa-phone'></i> Mobile</label>
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                className="form-control"
+                                                                name='mobile'
+                                                                onChange={handleChange}
+                                                                value={mobile}
+                                                                placeholder="Enter your mobile number"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <h5 className="mb-1 mt-4">Shipping address</h5>
+
+                                                <div className="row mb-4">
+                                                    <div className="col-lg-6 mt-3">
+                                                        <div className="form-outline">
+                                                            <label className="form-label" htmlFor="form6Example1"> Address</label>
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                className="form-control"
+                                                                name='address'
+                                                                onChange={handleChange}
+                                                                value={address}
+                                                                placeholder="Street House number"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-lg-6 mt-3">
+                                                        <div className="form-outline">
+                                                            <label className="form-label" htmlFor="form6Example1"> City</label>
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                className="form-control"
+                                                                name='city'
+                                                                onChange={handleChange}
+                                                                value={city}
+                                                                placeholder="Enter your City"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="col-lg-6 mt-3">
+                                                        <div className="form-outline">
+                                                            <label className="form-label" htmlFor="form6Example1"> State</label>
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                className="form-control"
+                                                                name='state'
+                                                                onChange={handleChange}
+                                                                value={state}
+                                                                placeholder="Enter your State"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-lg-6 mt-3">
+                                                        <div className="form-outline">
+                                                            <label className="form-label" htmlFor="form6Example1"> Country</label>
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                className="form-control"
+                                                                name='country'
+                                                                onChange={handleChange}
+                                                                value={country}
+                                                                placeholder="Enter your Country"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* </form> */}
+                                            </div>
                                         }
-                                        {/* <hr className='shadow' /> */}
-                                        <Link to='/' className='btn btn-primary'> <i className='fas fa-shopping-cart'></i> Continue Shopping</Link>
 
-
-                                        {/* Personal info */}
-                                    </section>
-                                    {cart?.length > 0 &&
-                                        // <form>
-                                        <div>
-                                            <h5 className="mb-4 mt-4">Personal Information</h5>
-                                            {/* 2 column grid layout with text inputs for the first and last names */}
-                                            <div className="row mb-4">
-                                                <div className="col">
-                                                    <div className="form-outline">
-                                                        <label className="form-label" htmlFor="full_name"> <i className='fas fa-user'></i> Full Name</label>
-                                                        <input
-                                                            type="text"
-                                                            id=""
-                                                            className="form-control"
-                                                            placeholder="Enter your full name"
-                                                            name='fullName'
-                                                            onChange={handleChange}
-                                                            value={fullName}
-                                                        />
-                                                    </div>
-                                                </div>
-
+                                    </div>
+                                    <div className="col-lg-4 mb-4 mb-md-0">
+                                        {/* Section: Summary */}
+                                        <section className="shadow-4 p-4 rounded-5 mb-4">
+                                            <h5 className="mb-3">Cart Summary</h5>
+                                            <div className="d-flex justify-content-between mb-3">
+                                                <span>Subtotal </span>
+                                                <span>${cartTotal.sub_total?.toFixed(2)}</span>
                                             </div>
-
-                                            <div className="row mb-4">
-                                                <div className="col">
-                                                    <div className="form-outline">
-                                                        <label className="form-label" htmlFor="form6Example1"><i className='fas fa-envelope'></i> Email</label>
-                                                        <input
-                                                            type="text"
-                                                            id="form6Example1"
-                                                            className="form-control"
-                                                            name='email'
-                                                            onChange={handleChange}
-                                                            value={email}
-                                                            placeholder="emample@example.com"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="form-outline">
-                                                        <label className="form-label" htmlFor="form6Example1"><i className='fas fa-phone'></i> Mobile</label>
-                                                        <input
-                                                            type="text"
-                                                            id="form6Example1"
-                                                            className="form-control"
-                                                            name='mobile'
-                                                            onChange={handleChange}
-                                                            value={mobile}
-                                                            placeholder="Enter your mobile number"
-                                                        />
-                                                    </div>
-                                                </div>
+                                            <div className="d-flex justify-content-between">
+                                                <span>Shipping </span>
+                                                <span>${cartTotal.shipping?.toFixed(2)}</span>
                                             </div>
-
-                                            <h5 className="mb-1 mt-4">Shipping address</h5>
-
-                                            <div className="row mb-4">
-                                                <div className="col-lg-6 mt-3">
-                                                    <div className="form-outline">
-                                                        <label className="form-label" htmlFor="form6Example1"> Address</label>
-                                                        <input
-                                                            type="text"
-                                                            id="form6Example1"
-                                                            className="form-control"
-                                                            name='address'
-                                                            onChange={handleChange}
-                                                            value={address}
-                                                            placeholder="Street House number"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="col-lg-6 mt-3">
-                                                    <div className="form-outline">
-                                                        <label className="form-label" htmlFor="form6Example1"> City</label>
-                                                        <input
-                                                            type="text"
-                                                            id="form6Example1"
-                                                            className="form-control"
-                                                            name='city'
-                                                            onChange={handleChange}
-                                                            value={city}
-                                                            placeholder="Enter your City"
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                <div className="col-lg-6 mt-3">
-                                                    <div className="form-outline">
-                                                        <label className="form-label" htmlFor="form6Example1"> State</label>
-                                                        <input
-                                                            type="text"
-                                                            id="form6Example1"
-                                                            className="form-control"
-                                                            name='state'
-                                                            onChange={handleChange}
-                                                            value={state}
-                                                            placeholder="Enter your State"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="col-lg-6 mt-3">
-                                                    <div className="form-outline">
-                                                        <label className="form-label" htmlFor="form6Example1"> Country</label>
-                                                        <input
-                                                            type="text"
-                                                            id="form6Example1"
-                                                            className="form-control"
-                                                            name='country'
-                                                            onChange={handleChange}
-                                                            value={country}
-                                                            placeholder="Enter your Country"
-                                                        />
-                                                    </div>
-                                                </div>
+                                            <div className="d-flex justify-content-between">
+                                                <span>Tax </span>
+                                                <span>${cartTotal.tax?.toFixed(2)}</span>
                                             </div>
-                                            {/* </form> */}
-                                        </div>
-                                    }
-
-                                </div>
-                                <div className="col-lg-4 mb-4 mb-md-0">
-                                    {/* Section: Summary */}
-                                    <section className="shadow-4 p-4 rounded-5 mb-4">
-                                        <h5 className="mb-3">Cart Summary</h5>
-                                        <div className="d-flex justify-content-between mb-3">
-                                            <span>Subtotal </span>
-                                            <span>${cartTotal.sub_total?.toFixed(2)}</span>
-                                        </div>
-                                        <div className="d-flex justify-content-between">
-                                            <span>Shipping </span>
-                                            <span>${cartTotal.shipping?.toFixed(2)}</span>
-                                        </div>
-                                        <div className="d-flex justify-content-between">
-                                            <span>Tax </span>
-                                            <span>${cartTotal.tax?.toFixed(2)}</span>
-                                        </div>
-                                        <div className="d-flex justify-content-between">
-                                            <span>Servive Fee </span>
-                                            <span>${cartTotal.service_fee?.toFixed(2)}</span>
-                                        </div>
-                                        <hr className="my-4" />
-                                        <div className="d-flex justify-content-between fw-bold mb-5">
-                                            <span>Total </span>
-                                            <span>${cartTotal.total?.toFixed(2)}</span>
-                                        </div>
-                                        <button onClick={createOrder} className="btn btn-primary btn-rounded w-100" >
-                                            Proceed to Checkout <i className='fas fa-arrow-right ms-2'></i>
-                                        </button>
-                                    </section>
-                                    {/* APPLY COUPAN CODE */}
-                                    <section className='shadow card p-4 rounded-5'>
-                                        <h4 className='mb-4'>Apply promo code</h4>
-                                        <div className='d-flex align-items-center'>
-                                            <input
-                                                type='text'
-                                                className='form-control rounded me-1'
-                                                placeholder='Promo code'
-                                            />
-                                            {/* <button
+                                            <div className="d-flex justify-content-between">
+                                                <span>Servive Fee </span>
+                                                <span>${cartTotal.service_fee?.toFixed(2)}</span>
+                                            </div>
+                                            <hr className="my-4" />
+                                            <div className="d-flex justify-content-between fw-bold mb-5">
+                                                <span>Total </span>
+                                                <span>${cartTotal.total?.toFixed(2)}</span>
+                                            </div>
+                                            <button onClick={createOrder} className="btn btn-primary btn-rounded w-100" >
+                                                Proceed to Checkout <i className='fas fa-arrow-right ms-2'></i>
+                                            </button>
+                                        </section>
+                                        {/* APPLY COUPAN CODE */}
+                                        {/* <section className='shadow card p-4 rounded-5'>
+                                            <h4 className='mb-4'>Apply promo code</h4>
+                                            <div className='d-flex align-items-center'>
+                                                <input
+                                                    type='text'
+                                                    className='form-control rounded me-1'
+                                                    placeholder='Promo code'
+                                                /> */}
+                                                {/* <button
                                                 type='button'
                                                 className='btn btn-link btn-rounded overflow-visible'
                                             > */}
-                                            <button
-                                                type='button'
-                                                className='btn btn-secondary btn-rounded overflow-visible'
-                                            >
-                                                Apply
-                                            </button>
-                                        </div>
-                                    </section>
-                                    {/* APPLY COUPAN CODE */}
+                                                {/* <button
+                                                    type='button'
+                                                    className='btn btn-secondary btn-rounded overflow-visible'
+                                                >
+                                                    Apply
+                                                </button>
+                                            </div>
+                                        </section> */}
+                                        {/* APPLY COUPAN CODE */}
+                                    </div>
                                 </div>
-                            </div>
-                        </section>
-                    </div>
-                </main>
-            </div>
-        </main>
-
+                            </section>
+                        </div>
+                    </main>
+                </div>
+            </main>
+        </div>
     )
 }
 
