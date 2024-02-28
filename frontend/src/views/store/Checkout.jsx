@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react'
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+import React, { useState, useEffect } from 'react'
+// import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+import { useParams, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import apiInstance from '../../utils/axios';
-import { useParams, useNavigate } from 'react-router-dom';
 
 
 const initialOptions = {
@@ -13,15 +14,39 @@ const initialOptions = {
 
 function Checkout() {
     const [order, setOrder] = useState([])
+    const [couponCode, setCouponCode] = useState("")
 
     const param = useParams()
-    console.log(param.order_oid);
 
-    useEffect(() => {
+    const fetchOrderData = () => {
         apiInstance.get(`checkout/${param.order_oid}/`).then((res) => {
             setOrder(res.data);
         })
+    }
+
+    useEffect(() => {
+        fetchOrderData()
     }, [])
+
+    const applyCoupon = async () => {
+        // console.log(couponCode);
+        // console.log(order.oid);
+
+        const formdata = new FormData()
+        formdata.append("order_oid", order.oid)
+        formdata.append("coupon_code", couponCode)
+
+        try {
+            const response = await apiInstance.post("coupon/", formdata)
+            fetchOrderData()
+            Swal.fire({
+                icon: response.data.icon,
+                title: response.data.message,
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <main>
@@ -60,7 +85,7 @@ function Checkout() {
                                                         type="text"
                                                         readOnly
                                                         className="form-control"
-                                                    value={order.email}
+                                                        value={order.email}
                                                     />
                                                 </div>
                                             </div>
@@ -72,7 +97,7 @@ function Checkout() {
                                                         type="text"
                                                         readOnly
                                                         className="form-control"
-                                                    value={order.mobile}
+                                                        value={order.mobile}
                                                     />
                                                 </div>
                                             </div>
@@ -83,7 +108,7 @@ function Checkout() {
                                                         type="text"
                                                         readOnly
                                                         className="form-control"
-                                                    value={order.address}
+                                                        value={order.address}
                                                     />
                                                 </div>
                                             </div>
@@ -94,7 +119,7 @@ function Checkout() {
                                                         type="text"
                                                         readOnly
                                                         className="form-control"
-                                                    value={order.city}
+                                                        value={order.city}
                                                     />
                                                 </div>
                                             </div>
@@ -105,7 +130,7 @@ function Checkout() {
                                                         type="text"
                                                         readOnly
                                                         className="form-control"
-                                                    value={order.state}
+                                                        value={order.state}
                                                     />
                                                 </div>
                                             </div>
@@ -116,7 +141,7 @@ function Checkout() {
                                                         type="text"
                                                         readOnly
                                                         className="form-control"
-                                                    value={order.country}
+                                                        value={order.country}
                                                     />
                                                 </div>
                                             </div>
@@ -142,18 +167,28 @@ function Checkout() {
                                         <span>Subtotal </span>
                                         <span>${order.sub_total}</span>
                                     </div>
-                                    <div className="d-flex justify-content-between">
+                                    <div className="d-flex justify-content-between mb-2">
                                         <span>Shipping </span>
                                         <span>${order.shipping_amount}</span>
                                     </div>
-                                    <div className="d-flex justify-content-between">
+                                    <div className="d-flex justify-content-between mb-2">
                                         <span>Tax </span>
                                         <span>${order.tax_fee}</span>
                                     </div>
-                                    <div className="d-flex justify-content-between">
+                                    <div className="d-flex justify-content-between mb-2">
                                         <span>Servive Fee </span>
                                         <span>${order.service_fee}</span>
                                     </div>
+
+                                    {/* Discount */}
+                                    {order.saved !== "0.00" &&
+                                        <div className="d-flex text-danger fw-bold justify-content-between mb-2">
+                                            <span>Discount</span>
+                                            <span>-${order.saved}</span>
+                                        </div>
+                                    }
+                                    {/* Discount */}
+
                                     <hr className="my-4" />
                                     <div className="d-flex justify-content-between fw-bold mb-5">
                                         <span>Total </span>
@@ -161,26 +196,28 @@ function Checkout() {
                                     </div>
                                     {/* APPLY COUPAN CODE */}
                                     <section className='shadow mb-4 card p-4 rounded-5'>
-                                            <h4 className='mb-4'>Apply promo code</h4>
-                                            <div className='d-flex align-items-center'>
-                                                <input
-                                                    type='text'
-                                                    className='form-control rounded me-1'
-                                                    placeholder='Promo code'
-                                                />
-                                                {/* <button
+                                        <h4 className='mb-4'>Apply promo code</h4>
+                                        <div className='d-flex align-items-center'>
+                                            <input
+                                                type='text'
+                                                className='form-control rounded me-1'
+                                                placeholder='Promo code'
+                                                onChange={(e) => setCouponCode(e.target.value)}
+                                            />
+                                            {/* <button
                                                 type='button'
                                                 className='btn btn-link btn-rounded overflow-visible'
                                             > */}
-                                                <button
-                                                    type='button'
-                                                    className='btn btn-secondary btn-rounded overflow-visible'
-                                                >
-                                                    Apply
-                                                </button>
-                                            </div>
-                                        </section>
-                                        {/* APPLY COUPAN CODE */}
+                                            <button
+                                                type='button'
+                                                className='btn btn-secondary btn-rounded overflow-visible'
+                                                onClick={applyCoupon}
+                                            >
+                                                Apply
+                                            </button>
+                                        </div>
+                                    </section>
+                                    {/* APPLY COUPAN CODE */}
 
                                     {/* <div className="shadow p-3 d-flex mt-4 mb-4"></div> */}
                                     <div className="p-6 d-flex mt-4 mb-4">
@@ -215,7 +252,7 @@ function Checkout() {
                                             </form>
                                         } */}
 
-                                    <PayPalScriptProvider options={initialOptions}>
+                                    {/* <PayPalScriptProvider options={initialOptions}>
                                         <PayPalButtons className='mt-3'
                                             createOrder={(data, actions) => {
                                                 return actions.order.create({
@@ -243,7 +280,7 @@ function Checkout() {
                                                 })
                                             }}
                                         />
-                                    </PayPalScriptProvider>
+                                    </PayPalScriptProvider> */}
 
                                     {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
