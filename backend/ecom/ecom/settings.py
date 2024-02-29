@@ -1,5 +1,9 @@
 from pathlib import Path
 from datetime import timedelta
+from environs import Env
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,6 +137,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #####################################--- MANUAL--CONFIGS ---##################################### 
+
+# STRIPE
+STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
+STRIPE_SECRETE_KEY = env("STRIPE_SECRETE_KEY")
 
 # django-cors-headers
 # https://pypi.org/project/django-cors-headers/

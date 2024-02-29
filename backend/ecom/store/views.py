@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.conf import settings
 from decimal import Decimal
 
 from rest_framework import generics, status
@@ -7,7 +8,7 @@ from rest_framework.response import Response
 
 import stripe
 
-stripe.api_key = "sk_test_51Oox5z2LYflDR0wq8VeiCIXGeZWSIPGoVoRmerMCj2eP6O2ibFxwyAcDzKShC5f5TfAjNWP2iY34ZksTiEYojyfl00kBqENdn6"
+stripe.api_key = settings.STRIPE_SECRETE_KEY
 
 from userauths.models import User
 from store.serializers import (
