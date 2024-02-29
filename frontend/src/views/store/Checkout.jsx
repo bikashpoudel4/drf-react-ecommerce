@@ -29,9 +29,6 @@ function Checkout() {
     }, [])
 
     const applyCoupon = async () => {
-        // console.log(couponCode);
-        // console.log(order.oid);
-
         const formdata = new FormData()
         formdata.append("order_oid", order.oid)
         formdata.append("coupon_code", couponCode)
