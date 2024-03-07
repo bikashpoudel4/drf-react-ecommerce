@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 import apiInstance from '../../utils/axios';
+import { SERVER_URL } from '../../utils/constants';
 
 
 const initialOptions = {
@@ -15,6 +16,7 @@ const initialOptions = {
 function Checkout() {
     const [order, setOrder] = useState([])
     const [couponCode, setCouponCode] = useState("")
+    const [paymentLoading, setpaymentLoading] = useState(false)
 
     const param = useParams()
 
@@ -43,6 +45,11 @@ function Checkout() {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    const payWithStripe = (event) => {
+        setpaymentLoading(true)
+        event.target.form.submit()
     }
 
     return (
@@ -216,12 +223,26 @@ function Checkout() {
                                     </section>
                                     {/* APPLY COUPAN CODE */}
 
-                                    {/* <div className="shadow p-3 d-flex mt-4 mb-4"></div> */}
-                                    <div className="p-6 d-flex mt-4 mb-4">
-                                        <button type='button' className='btn btn-primary btn-rounded w-100'>
-                                            Pay With Stripe <i className='fas fa-credit-card' />
-                                        </button>
-                                    </div>
+                                    {/* PAYMENT METHOD */}
+                                    {paymentLoading === true &&
+                                        <form action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`}>
+                                            <button onClick={payWithStripe} disabled type='submit' className='btn btn-primary btn-rounded w-100'>
+                                                Processing... <i className='fas fa-spinner fa-spin' />
+                                            </button>
+                                        </form>
+                                    }
+
+                                    {paymentLoading === false &&
+                                        <form action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`} method='POST'>
+                                            {/* <div className="p-6 d-flex mt-4 mb-4"> */}
+                                            <button onClick={payWithStripe} type='submit' className='btn btn-primary btn-rounded w-100'>
+                                                Pay with stripe <i className='fas fa-credit-card' />
+                                            </button>
+                                            {/* </div> */}
+                                        </form>
+                                    }
+                                    {/* PAYMENT METHOD */}
+
                                     {/* {loading === true &&
                                                 <>
                                                     <input readOnly value={couponCode} name="couponCode" type="text" className='form-control' style={{ border: "dashed 1px gray" }} placeholder='Enter Coupon Code' id="" />
@@ -282,6 +303,7 @@ function Checkout() {
                                     {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paypal)</button> */}
+
                                 </section>
                             </div>
                         </div>

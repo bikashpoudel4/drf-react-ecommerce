@@ -380,7 +380,7 @@ class StripeCheckoutView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     queryset = CartOrder.objects.all()
 
-    def create(self):
+    def create(self, *args, **kwargs):
         order_oid = self.kwargs['order_oid']
         order = CartOrder.objects.get(oid=order_oid)
 
@@ -390,7 +390,7 @@ class StripeCheckoutView(generics.CreateAPIView):
         try:
             checkout_session = stripe.checkout.Session.create(
                 customer_email=order.email,
-                payment_method=['card'],
+                payment_method_types=['card'],
                 line_items=[
                     {
                         'price_data':{
