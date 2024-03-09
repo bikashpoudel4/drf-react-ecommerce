@@ -413,3 +413,37 @@ class StripeCheckoutView(generics.CreateAPIView):
             return redirect(checkout_session.url)
         except stripe.error.StripeError as e:
             return Response({"error": f"Something went wrong while creating the checkout session: {str(e)}"})
+
+
+class PaymentSuccessView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    permission_classes = [AllowAny]
+    queryset = CartOrder.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        order_oid = payload['order_oid']
+        session_id = payload['session_id']
+
+        order = CartOrder.objects.get(oid=order_oid)
+        order_items = CartOrderItem.objects.filter(order=order)
+
+        if session_id != 'null':
+            session = stripe.checkout.Session.retrieve(session_id)
+
+            if session.payment_status == "paid":
+                if order.payment_status == "processing":
+                    order.payment_status = 'paid'
+                    order.save()
+                    return Response({"message":"Payment Successfull"})
+                else:
+                    return Response({"message":"Already Paid"})
+            elif session.payment_status =="unpaid":
+                return Response({"message":"Your Invoice is Unpaid"})
+            elif session.payment_status =="canclled":
+                return Response({"message":"Your Invoice was canclled"})
+            else:
+                return Response({"message":"An Error Occored, Try Again..."})
+        else:
+            session = None
