@@ -6,18 +6,47 @@ import apiInstance from '../../utils/axios'
 
 function PaymentSuccess() {
     const [order, setOrder] = useState([])
-    const [loading, setLoading] = useState(true)
+    // const [loading, setIsLoading] = useState(true)
+    const [status, setStatus] = useState("Verifying")
 
     const param = useParams()
 
-    const urlParam = new URLSearchParams(window.location.search)
-    const sessionId = urlParam.get("session_id")
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
+    console.log(param.order_oid);
+    console.log(sessionId);
 
     useEffect(() => {
         apiInstance.get(`checkout/${param.order_oid}/`).then((res) => {
             setOrder(res.data)
         })
-    }, [])
+    }, [param])
+
+    useEffect(() => {
+        const formdata = new FormData()
+        formdata.append("order_oid", param?.order_oid)
+        formdata.append("session_id", sessionId)
+
+        // setIsLoading("Verifying")
+        setStatus("Verifying")
+
+        apiInstance.post(`payment-success/${order.oid}/`, formdata).then((res) => {
+            if (res.data.message === "Payment Successfull") {
+                setStatus("Payment Successfull")
+            }
+            if (res.data.message === "Already Paid") {
+                setStatus("Already Paid")
+            }
+            if (res.data.message === "Your Invoice is Unpaid") {
+                setStatus("Your Invoice is Unpaid")
+            }
+            // if(res.data === "Your Invoice was canclled"){
+            //     setStatus("Your Invoice was canclled")
+            // }
+            console.log(res.data);
+        })
+    }, [param?.order_oid])
 
     return (
         <>
@@ -41,31 +70,47 @@ function PaymentSuccess() {
                                                 <div className="d-flex justify-content-center align-items-center">
                                                     <div className="col-lg-12">
                                                         <div className="" />
-                                                        {/* {loading === true && */}
-                                                        <>
-                                                            <div className="border border-3 border-warning">
 
+                                                        {status === "Verifying" &&
+                                                            <div className="border border-3 border-warning">
                                                                 <div className="card bg-white shadow p-5">
                                                                     <div className="mb-4 text-center">
                                                                         <i
                                                                             className="fas fa-clock text-warning"
-                                                                            style={{ fontSize: 100, color: "green" }}
+                                                                            style={{ fontSize: 100, color: "yellow" }}
                                                                         />
                                                                     </div>
                                                                     <div className="text-center">
-                                                                        <h1>Pending...</h1>
+                                                                        <h3>Payment Verifying <i className="fas fa-spinner fa-spin"></i></h3>
                                                                         <p>
-                                                                            We are verifying your payment, please hold on :)
+                                                                            <b className='text-success'>Please hold on, while we are verify your payment</b> <br />
+                                                                            <b className='text-danger'>NOTE: Do not reload or leave the page</b>
                                                                         </p>
-
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </>
-                                                        {/* } */}
+                                                        }
 
-                                                        {/* {orderResponse.message === "Already Paid" && loading == false && */}
-                                                        <>
+                                                        {status === "Your Invoice is Unpaid" &&
+                                                            <div className="border border-3 border-warning">
+                                                                <div className="card bg-white shadow p-5">
+                                                                    <div className="mb-4 text-center">
+                                                                        <i
+                                                                            className="fas fa-clock text-warning"
+                                                                            style={{ fontSize: 100, color: "red" }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-center">
+                                                                        <h3>Unpaid Invoice<i className="fas fa-ban"></i></h3>
+                                                                        <p>
+                                                                            <b className='text-danger'>Please try making the payment again.</b>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        {status === "Payment Successfull" &&
                                                             <div className="border border-3 border-success">
                                                                 <div className="card bg-white shadow p-5">
                                                                     <div className="mb-4 text-center">
@@ -75,49 +120,7 @@ function PaymentSuccess() {
                                                                         />
                                                                     </div>
                                                                     <div className="text-center">
-                                                                        <h1>Already Paid!</h1>
-                                                                        <p>
-                                                                            You have already paid for this order, thank you.
-                                                                        </p>
-                                                                        <button
-                                                                            className="btn btn-success mt-3 me-2"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#exampleModal"
-                                                                        >
-                                                                            View Order <i className="fas fa-eye" />{" "}
-                                                                        </button>
-                                                                        <Link to={`/invoice/${order.oid}/`} className="btn btn-success mt-3 me-2" >
-                                                                            Download Invoice{" "}
-                                                                            <i className="fas fa-file-invoice" />{" "}
-                                                                        </Link>
-                                                                        <Link
-                                                                            to="/"
-                                                                            className="btn btn-success mt-3 me-2"
-                                                                        >
-                                                                            Go Home <i className="fas fa-fa-arrow-left" />{" "}
-                                                                        </Link>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </>
-                                                        {/* } */}
-
-                                                        {/* {orderResponse.message === "Payment Successfull" && loading == false && */}
-                                                        <>
-                                                            <div className="border border-3 border-success">
-                                                                <div className="card bg-white shadow p-5">
-                                                                    <div className="mb-4 text-center">
-                                                                        <i
-                                                                            className="fas fa-check-circle text-success"
-                                                                            style={{ fontSize: 100, color: "green" }}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="text-center">
-                                                                        <h1>Thank You !</h1>
-                                                                        {/* <p>
-                                                                            Your checkout was successfull, we have sent the
-                                                                            order detail to your email{" "}
-                                                                        </p> */}
+                                                                        <h3>Thank You !</h3>
                                                                         <p>
                                                                             Your checkout was successfull, Please note your order id: <b>{order.oid}</b><br></br>
                                                                             We have sent the order detail to your email: <b>{order.email}</b>
@@ -129,7 +132,7 @@ function PaymentSuccess() {
                                                                         >
                                                                             View Order <i className="fas fa-eye" />{" "}
                                                                         </button>
-                                                                        <Link to={`/invoice/${order.oid}/`} className="btn btn-success mt-3 me-2" >
+                                                                        <Link to={`/invoice/${order.oid}/`} className="btn btn-primary mt-3 me-2" >
                                                                             Download Invoice{" "}
                                                                             <i className="fas fa-file-invoice" />{" "}
                                                                         </Link>
@@ -142,8 +145,45 @@ function PaymentSuccess() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </>
-                                                        {/* } */}
+                                                        }
+
+                                                        {status === "Already Paid" &&
+                                                            <div className="border border-3 border-success">
+                                                                <div className="card bg-white shadow p-5">
+                                                                    <div className="mb-4 text-center">
+                                                                        <i
+                                                                            className="fas fa-check-circle text-success"
+                                                                            style={{ fontSize: 100, color: "green" }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-center">
+                                                                        <h3>Already Paid !</h3>
+                                                                        <p>
+                                                                            Your checkout was successfull, Please note your order id: <b>{order.oid}</b><br></br>
+                                                                            We have sent the order detail to your email: <b>{order.email}</b>
+                                                                        </p>
+                                                                        <button
+                                                                            className="btn btn-success mt-3 me-2"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#exampleModal"
+                                                                        >
+                                                                            View Order <i className="fas fa-eye" />{" "}
+                                                                        </button>
+                                                                        <Link to={`/invoice/${order.oid}/`} className="btn btn-primary mt-3 me-2" >
+                                                                            Download Invoice{" "}
+                                                                            <i className="fas fa-file-invoice" />{" "}
+                                                                        </Link>
+                                                                        <a
+                                                                            href="{% url 'dashboard:dashboard' %}"
+                                                                            className="btn btn-secondary mt-3 me-2"
+                                                                        >
+                                                                            Go Home <i className="fas fa-fa-arrow-left" />{" "}
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+
                                                     </div>
                                                 </div>
                                             </div>

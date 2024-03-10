@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 
 from rest_framework import generics, status
@@ -415,6 +416,40 @@ class StripeCheckoutView(generics.CreateAPIView):
             return Response({"error": f"Something went wrong while creating the checkout session: {str(e)}"})
 
 
+# class PaymentSuccessView(generics.CreateAPIView):
+#     serializer_class = CartOrderSerializer
+#     permission_classes = [AllowAny]
+#     queryset = CartOrder.objects.all()
+
+#     def create(self, request, *args, **kwargs):
+#         payload = request.data
+
+#         order_oid = payload['order_oid']
+#         session_id = payload['session_id']
+
+#         order = CartOrder.objects.get(oid=order_oid)
+#         order_items = CartOrderItem.objects.filter(order=order)
+
+#         if session_id != 'null':
+#             session = stripe.checkout.Session.retrieve(session_id)
+
+#             if session.payment_status == "paid":
+#                 if order.payment_status == "pending":
+#                     order.payment_status = 'paid'
+#                     order.save()
+#                     return Response({"message":"Payment Successfull"})
+#                 else:
+#                     return Response({"message":"Already Paid"})
+#             elif session.payment_status =="unpaid":
+#                 return Response({"message":"Your Invoice is Unpaid"})
+#             elif session.payment_status =="canclled":
+#                 return Response({"message":"Your Invoice was canclled"})
+#             else:
+#                 return Response({"message":"An Error Occored, Try Again..."})
+#         else:
+#             session = None
+
+
 class PaymentSuccessView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer
     permission_classes = [AllowAny]
@@ -426,24 +461,28 @@ class PaymentSuccessView(generics.CreateAPIView):
         order_oid = payload['order_oid']
         session_id = payload['session_id']
 
-        order = CartOrder.objects.get(oid=order_oid)
+        try:
+            order = CartOrder.objects.get(oid=order_oid)
+        except ObjectDoesNotExist:
+            return Response({"message": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
         order_items = CartOrderItem.objects.filter(order=order)
 
         if session_id != 'null':
             session = stripe.checkout.Session.retrieve(session_id)
 
             if session.payment_status == "paid":
-                if order.payment_status == "processing":
+                if order.payment_status == "pending":
                     order.payment_status = 'paid'
                     order.save()
-                    return Response({"message":"Payment Successfull"})
+                    return Response({"message": "Payment Successful"})
                 else:
-                    return Response({"message":"Already Paid"})
-            elif session.payment_status =="unpaid":
-                return Response({"message":"Your Invoice is Unpaid"})
-            elif session.payment_status =="canclled":
-                return Response({"message":"Your Invoice was canclled"})
+                    return Response({"message": "Already Paid"})
+            elif session.payment_status == "unpaid":
+                return Response({"message": "Your Invoice is Unpaid"})
+            elif session.payment_status == "cancelled":
+                return Response({"message": "Your Invoice was cancelled"})
             else:
-                return Response({"message":"An Error Occored, Try Again..."})
+                return Response({"message": "An Error Occurred, Try Again..."})
         else:
             session = None

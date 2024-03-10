@@ -61,6 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [GallaryInline, SpecificationInline, SizeInline, ColorInline]
 
 
+
 class CartAdmin(admin.ModelAdmin):
     list_display = [
         "product",
@@ -78,24 +79,30 @@ class CartAdmin(admin.ModelAdmin):
         "date",
     ]
 
-
 class CartOrderAdmin(admin.ModelAdmin):
-    inlines = [CartOrderItemInlineAdmin]
-    search_fields = ["oid", "full_name", "email", "mobile"]
-    list_editable = ["order_status", "payment_status"]
-    list_filter = ["payment_status", "order_status"]
     list_display = [
         "oid",
         "payment_status",
-        "order_status",
-        "sub_total",
-        "shipping_amount",
-        "tax_fee",
-        "service_fee",
         "total",
-        "saved",
-        "date",
     ]
+
+# class CartOrderAdmin(admin.ModelAdmin):
+#     inlines = [CartOrderItemInlineAdmin]
+#     search_fields = ["oid", "full_name", "email", "mobile"]
+#     list_editable = ["order_status", "payment_status"]
+#     list_filter = ["payment_status", "order_status"]
+#     list_display = [
+#         "oid",
+#         "payment_status",
+#         "order_status",
+#         "sub_total",
+#         "shipping_amount",
+#         "tax_fee",
+#         "service_fee",
+#         "total",
+#         "saved",
+#         "date",
+#     ]
 
 
 class CartOrderItemAdmin(admin.ModelAdmin):
