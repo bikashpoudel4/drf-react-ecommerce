@@ -156,4 +156,4 @@ function CreatePassword() {
     )
 }
 
-export default CreatePassword
+export default CreatePassword;

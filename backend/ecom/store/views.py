@@ -7,10 +7,6 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-import stripe
-
-stripe.api_key = settings.STRIPE_SECRETE_KEY
-
 from userauths.models import User
 from store.serializers import (
     ProductSerializer,
@@ -19,6 +15,7 @@ from store.serializers import (
     CartOrderSerializer,
     CartOrderItemSerializer,
     CouponSerializer,
+    NotificationSerializer,
 )
 from store.models import (
     Product,
@@ -37,7 +34,18 @@ from store.models import (
     Wishlist,
     Tax,
 )
+import stripe
 
+
+stripe.api_key = settings.STRIPE_SECRETE_KEY
+
+def send_notification(user=None, vendor=None, order=None, order_item=None):
+    Notification.objects.create(
+        user=user,
+        vendor=vendor,
+        order=order,
+        order_item=order_item
+    )
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
@@ -475,6 +483,19 @@ class PaymentSuccessView(generics.CreateAPIView):
                 if order.payment_status == "pending":
                     order.payment_status = 'paid'
                     order.save()
+
+                    # Send in app Notification to customers
+                    if order.buyer != None:
+                        send_notification(user=order.buyer, order=order)
+
+                    # send notification to vendors
+                    for o in order_items:
+                        send_notification(vendor=o.vendor, order=order, oreder_item=o)
+                    
+                    # Send Email to Buyer
+                    
+                    # Send Email to vendors
+
                     return Response({"message": "Payment Successful"})
                 else:
                     return Response({"message": "Already Paid"})
