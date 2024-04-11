@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
 from environs import Env
+import os
 
 env = Env()
 env.read_env()
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # CUSTOM APPS
+    # "jazzmin",
     'store',
     'userauths',
     'vendor',
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     "corsheaders",
+    "anymail",
 ]
 
 MIDDLEWARE = [
@@ -63,7 +66,7 @@ ROOT_URLCONF = 'ecom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,6 +144,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # STRIPE
 STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
 STRIPE_SECRETE_KEY = env("STRIPE_SECRETE_KEY")
+
+# ANYMAIL - mailgun
+MAILGUN_API_KEY = env("MAILGUN_API_KEY")
+MAILGUN_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
+ANYMAIL = {
+    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
+}
+FROM_EMAIL = 'devtest619@gmail.com'
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
 # django-cors-headers
 # https://pypi.org/project/django-cors-headers/

@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from decimal import Decimal
 
 from rest_framework import generics, status
@@ -493,7 +495,23 @@ class PaymentSuccessView(generics.CreateAPIView):
                         send_notification(vendor=o.vendor, order=order, order_item=o)
                     
                     # Send Email to Buyer
-                    
+                    context = {
+                        'order': order,
+                        'order_items': order_items,
+                    }
+                    subject = "Order Placed Successfully"
+                    text_body = render_to_string("email/customer_order_confirmation.txt", context)
+                    html_body = render_to_string("email/customer_order_confirmation.html", context)
+
+                    msg = EmailMultiAlternatives(
+                        subject=subject,
+                        from_email=settings.FROM_EMAIL,
+                        to=[order.email],
+                        body=text_body
+                    )
+                    msg.attach_alternative(html_body, "text/html")
+                    msg.send()
+
                     # Send Email to vendors
 
                     return Response({"message": "Payment Successful"})
