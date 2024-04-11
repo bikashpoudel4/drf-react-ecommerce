@@ -1,11 +1,10 @@
-import React from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 
-import apiInstance from '../../utils/axios'
+import apiInstance from '../../utils/axios';
 
 function PaymentSuccess() {
-    const [order, setOrder] = useState([])
+    const [order, setOrder] = useState({})
     // const [loading, setIsLoading] = useState(true)
     const [status, setStatus] = useState("Verifying")
 
@@ -35,10 +34,10 @@ function PaymentSuccess() {
             if (res.data.message === "Payment Successfull") {
                 setStatus("Payment Successfull")
             }
-            if (res.data.message === "Already Paid") {
+            else if (res.data.message === "Already Paid") {
                 setStatus("Already Paid")
             }
-            if (res.data.message === "Your Invoice is Unpaid") {
+            else if (res.data.message === "Your Invoice is Unpaid") {
                 setStatus("Your Invoice is Unpaid")
             }
             // if(res.data === "Your Invoice was canclled"){
@@ -47,6 +46,45 @@ function PaymentSuccess() {
             console.log(res.data);
         })
     }, [param?.order_oid])
+
+// function PaymentSuccess() {
+//     const [order, setOrder] = useState({});
+//     const [status, setStatus] = useState("Verifying");
+//     const param = useParams();
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const sessionId = urlParams.get('session_id');
+
+//     useEffect(() => {
+//         apiInstance.get(`checkout/${param.order_oid}/`)
+//             .then((res) => {
+//                 setOrder(res.data);
+//                 const formdata = new FormData();
+//                 formdata.append("order_oid", param?.order_oid);
+//                 formdata.append("session_id", sessionId);
+//                 setStatus("Verifying");
+//                 apiInstance.post(`payment-success/${res.data.oid}/`, formdata)
+//                     .then((res) => {
+//                         if (res.data.message === "Payment Successful") {
+//                             setStatus("Payment Successful");
+//                         } else if (res.data.message === "Already Paid") {
+//                             setStatus("Already Paid");
+//                         } else if (res.data.message === "Your Invoice is Unpaid") {
+//                             setStatus("Your Invoice is Unpaid");
+//                         } else {
+//                             setStatus("An Error Occurred");
+//                         }
+//                         console.log(res.data);
+//                     })
+//                     .catch((error) => {
+//                         console.error("Error:", error);
+//                         setStatus("An Error Occurred");
+//                     });
+//             })
+//             .catch((error) => {
+//                 console.error("Error:", error);
+//                 setStatus("An Error Occurred");
+//             });
+//     }, [param.order_oid, sessionId]);
 
     return (
         <>
@@ -71,7 +109,7 @@ function PaymentSuccess() {
                                                     <div className="col-lg-12">
                                                         <div className="" />
 
-                                                        {status === "Verifying" &&
+                                                        {status === "Verifying" && (
                                                             <div className="border border-3 border-warning">
                                                                 <div className="card bg-white shadow p-5">
                                                                     <div className="mb-4 text-center">
@@ -89,9 +127,9 @@ function PaymentSuccess() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        }
+                                                        )}
 
-                                                        {status === "Your Invoice is Unpaid" &&
+                                                        {status === "Your Invoice is Unpaid" && (
                                                             <div className="border border-3 border-warning">
                                                                 <div className="card bg-white shadow p-5">
                                                                     <div className="mb-4 text-center">
@@ -108,9 +146,9 @@ function PaymentSuccess() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        }
+                                                        )}
 
-                                                        {status === "Payment Successfull" &&
+                                                        {status === "Payment Successfull" && (
                                                             <div className="border border-3 border-success">
                                                                 <div className="card bg-white shadow p-5">
                                                                     <div className="mb-4 text-center">
@@ -145,9 +183,9 @@ function PaymentSuccess() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        }
+                                                        )}
 
-                                                        {status === "Already Paid" &&
+                                                        {status === "Already Paid" && (
                                                             <div className="border border-3 border-success">
                                                                 <div className="card bg-white shadow p-5">
                                                                     <div className="mb-4 text-center">
@@ -182,7 +220,7 @@ function PaymentSuccess() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        }
+                                                        )}
 
                                                     </div>
                                                 </div>

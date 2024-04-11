@@ -490,7 +490,7 @@ class PaymentSuccessView(generics.CreateAPIView):
 
                     # send notification to vendors
                     for o in order_items:
-                        send_notification(vendor=o.vendor, order=order, oreder_item=o)
+                        send_notification(vendor=o.vendor, order=order, order_item=o)
                     
                     # Send Email to Buyer
                     
