@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
-    "corsheaders",
-    "anymail",
+    'corsheaders',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -66,7 +66,8 @@ ROOT_URLCONF = 'ecom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        # 'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -145,15 +146,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
 STRIPE_SECRETE_KEY = env("STRIPE_SECRETE_KEY")
 
-# ANYMAIL - mailgun
-MAILGUN_API_KEY = env("MAILGUN_API_KEY")
-MAILGUN_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
-ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
-}
-FROM_EMAIL = 'devtest619@gmail.com'
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+# # ANYMAIL - mailgun --- MAILGUN--------
+# MAILGUN_API_KEY = env("MAILGUN_API_KEY")
+# MAILGUN_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN")
+# ANYMAIL = {
+#     "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+#     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
+# }
+# FROM_EMAIL = 'bikashpoudel4@gmail.com'
+# EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+# DEFAULT_FROM_EMAIL= 'bikashpoudel4@gmail.com'
+# SERVER_EMAIL= 'bikashpoudel4@gmail.com'
+
+# ######## SMTP# # HOST EMAIL Settings [SMTP]------SMTP-----
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+SITE_NAME = "XoXo"
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+# EMAIL_HOST_USER = 'devtest619@gmail.com'
+# EMAIL_HOST_PASSWORD = 'devtest#!1'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 # django-cors-headers
 # https://pypi.org/project/django-cors-headers/

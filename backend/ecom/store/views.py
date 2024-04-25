@@ -505,7 +505,8 @@ class PaymentSuccessView(generics.CreateAPIView):
 
                     msg = EmailMultiAlternatives(
                         subject=subject,
-                        from_email=settings.FROM_EMAIL,
+                        # from_email=settings.FROM_EMAIL,
+                        from_email=settings.EMAIL_HOST_USER,
                         to=[order.email],
                         body=text_body
                     )
