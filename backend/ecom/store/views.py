@@ -41,13 +41,12 @@ import stripe
 
 stripe.api_key = settings.STRIPE_SECRETE_KEY
 
+
 def send_notification(user=None, vendor=None, order=None, order_item=None):
     Notification.objects.create(
-        user=user,
-        vendor=vendor,
-        order=order,
-        order_item=order_item
+        user=user, vendor=vendor, order=order, order_item=order_item
     )
+
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
@@ -155,23 +154,24 @@ class CartAPIView(generics.ListCreateAPIView):
                 {"message": "Cart Created Successfully"}, status=status.HTTP_201_CREATED
             )
 
+
 class CartListView(generics.ListAPIView):
     serializer_class = CartSerializer
     permission_classes = [AllowAny]
     queryset = Cart.objects.all()
 
     def get_queryset(self):
-        cart_id = self.kwargs['cart_id']
-        user_id = self.kwargs.get('user_id')
+        cart_id = self.kwargs["cart_id"]
+        user_id = self.kwargs.get("user_id")
 
         if user_id is not None:
             user = User.objects.get(id=user_id)
             queryset = Cart.objects.filter(user=user, cart_id=cart_id)
         else:
             queryset = Cart.objects.filter(cart_id=cart_id)
-        
+
         return queryset
-    
+
 
 class CartDetailView(generics.RetrieveAPIView):
     serializer_class = CartSerializer
@@ -179,17 +179,17 @@ class CartDetailView(generics.RetrieveAPIView):
     lookup_field = "cart_id"
 
     def get_queryset(self):
-        cart_id = self.kwargs['cart_id']
-        user_id = self.kwargs.get('user_id')
+        cart_id = self.kwargs["cart_id"]
+        user_id = self.kwargs.get("user_id")
 
         if user_id is not None:
             user = User.objects.get(id=user_id)
             queryset = Cart.objects.filter(user=user, cart_id=cart_id)
         else:
             queryset = Cart.objects.filter(cart_id=cart_id)
-        
+
         return queryset
-    
+
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
 
@@ -205,13 +205,13 @@ class CartDetailView(generics.RetrieveAPIView):
             total_service_fee += float(self.calculate_service_fee(cart_item))
             total_sub_total += float(self.calculate_sub_total(cart_item))
             total_total += float(self.calculate_total(cart_item))
-        
+
         data = {
-            'shipping': total_shipping,
-            'tax': total_tax,
-            'service_fee': total_service_fee,
-            'sub_total': total_sub_total,
-            'total': total_total,
+            "shipping": total_shipping,
+            "tax": total_tax,
+            "service_fee": total_service_fee,
+            "sub_total": total_sub_total,
+            "total": total_total,
         }
 
         return Response(data)
@@ -227,19 +227,19 @@ class CartDetailView(generics.RetrieveAPIView):
 
     def calculate_sub_total(self, cart_item):
         return cart_item.sub_total
-    
+
     def calculate_total(self, cart_item):
         return cart_item.total
 
 
 class CartItemDeleteAPIView(generics.DestroyAPIView):
     serializer_class = CartSerializer
-    lookup_field = 'cart_id'
+    lookup_field = "cart_id"
 
     def get_object(self):
-        cart_id = self.kwargs['cart_id']
-        item_id = self.kwargs['item_id']
-        user_id = self.kwargs.get('user_id')
+        cart_id = self.kwargs["cart_id"]
+        item_id = self.kwargs["item_id"]
+        user_id = self.kwargs.get("user_id")
 
         if user_id:
             user = User.objects.get(id=user_id)
@@ -258,24 +258,24 @@ class CreateOrderAPIView(generics.CreateAPIView):
     def create(self, request):
         payload = request.data
 
-        full_name = payload['full_name']
-        email = payload['email']
-        mobile = payload['mobile']
-        address = payload['address']
-        city = payload['city']
-        state = payload['state']
-        country = payload['country']
-        cart_id = payload['cart_id']
-        user_id = payload['user_id']
+        full_name = payload["full_name"]
+        email = payload["email"]
+        mobile = payload["mobile"]
+        address = payload["address"]
+        city = payload["city"]
+        state = payload["state"]
+        country = payload["country"]
+        cart_id = payload["cart_id"]
+        user_id = payload["user_id"]
         print("user_id----------", user_id)
 
         try:
             user = User.objects.get(id=user_id)
         except:
             user = None
-        
+
         print("user----", user)
-        
+
         cart_items = Cart.objects.filter(cart_id=cart_id)
 
         total_shipping = Decimal(0.00)
@@ -330,16 +330,19 @@ class CreateOrderAPIView(generics.CreateAPIView):
         order.total = total_total
 
         order.save()
-    
-        return Response({"message": "Order Created Successfully", "order_oid":order.oid}, status=status.HTTP_201_CREATED)
-    
+
+        return Response(
+            {"message": "Order Created Successfully", "order_oid": order.oid},
+            status=status.HTTP_201_CREATED,
+        )
+
 
 class CheckoutView(generics.RetrieveAPIView):
     serializer_class = CartOrderSerializer
-    lookup_field = 'order_oid'
+    lookup_field = "order_oid"
 
     def get_object(self):
-        order_oid = self.kwargs['order_oid']
+        order_oid = self.kwargs["order_oid"]
         order = CartOrder.objects.get(oid=order_oid)
         return order
 
@@ -352,14 +355,16 @@ class CouponAPIView(generics.CreateAPIView):
     def create(self, request):
         payload = request.data
 
-        order_oid = payload['order_oid']
-        coupon_code = payload['coupon_code']
+        order_oid = payload["order_oid"]
+        coupon_code = payload["coupon_code"]
 
         order = CartOrder.objects.get(oid=order_oid)
         coupon = Coupon.objects.filter(code=coupon_code).first()
 
         if coupon:
-            order_items = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
+            order_items = CartOrderItem.objects.filter(
+                order=order, vendor=coupon.vendor
+            )
             if order_items:
                 for i in order_items:
                     if not coupon in i.coupon.all():
@@ -377,13 +382,25 @@ class CouponAPIView(generics.CreateAPIView):
                         i.save()
                         order.save()
 
-                        return Response( {"message": "Coupon Activated", "icon":"success"}, status=status.HTTP_200_OK)
+                        return Response(
+                            {"message": "Coupon Activated", "icon": "success"},
+                            status=status.HTTP_200_OK,
+                        )
                     else:
-                        return Response( {"message": "Coupon Already Activated", "icon":"warning"}, status=status.HTTP_200_OK)
+                        return Response(
+                            {"message": "Coupon Already Activated", "icon": "warning"},
+                            status=status.HTTP_200_OK,
+                        )
             else:
-                return Response( {"message": "Order Item Does Not Exists", "icon":"error"}, status=status.HTTP_200_OK)
+                return Response(
+                    {"message": "Order Item Does Not Exists", "icon": "error"},
+                    status=status.HTTP_200_OK,
+                )
         else:
-            return Response( {"message": "Coupon Does Not Exists", "icon":"error"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Coupon Does Not Exists", "icon": "error"},
+                status=status.HTTP_200_OK,
+            )
 
 
 class StripeCheckoutView(generics.CreateAPIView):
@@ -392,38 +409,46 @@ class StripeCheckoutView(generics.CreateAPIView):
     queryset = CartOrder.objects.all()
 
     def create(self, *args, **kwargs):
-        order_oid = self.kwargs['order_oid']
+        order_oid = self.kwargs["order_oid"]
         order = CartOrder.objects.get(oid=order_oid)
 
         if not order:
-            return Response({"message":"Order Not Found"}, status=status.HTTP_404_NOT_FOUND)
-        
+            return Response(
+                {"message": "Order Not Found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         try:
             checkout_session = stripe.checkout.Session.create(
                 customer_email=order.email,
-                payment_method_types=['card'],
+                payment_method_types=["card"],
                 line_items=[
                     {
-                        'price_data':{
-                            'currency':'usd',
-                            'product_data':{
-                                'name':order.full_name,
+                        "price_data": {
+                            "currency": "usd",
+                            "product_data": {
+                                "name": order.full_name,
                             },
-                            'unit_amount': int(order.total * 100)
+                            "unit_amount": int(order.total * 100),
                         },
-                        'quantity': 1,
+                        "quantity": 1,
                     }
                 ],
-                mode='payment',
-                success_url='http://localhost:5173/payment-success/' + order.oid + '?session_id={CHECKOUT_SESSION_ID}',
-                cancel_url='http://localhost:5173/payment-failed/?session_id={CHECKOUT_SESSION_ID}',
+                mode="payment",
+                success_url="http://localhost:5173/payment-success/"
+                + order.oid
+                + "?session_id={CHECKOUT_SESSION_ID}",
+                cancel_url="http://localhost:5173/payment-failed/?session_id={CHECKOUT_SESSION_ID}",
             )
             order.stripe_session_id = checkout_session.id
             order.save()
 
             return redirect(checkout_session.url)
         except stripe.error.StripeError as e:
-            return Response({"error": f"Something went wrong while creating the checkout session: {str(e)}"})
+            return Response(
+                {
+                    "error": f"Something went wrong while creating the checkout session: {str(e)}"
+                }
+            )
 
 
 # class PaymentSuccessView(generics.CreateAPIView):
@@ -468,22 +493,24 @@ class PaymentSuccessView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         payload = request.data
 
-        order_oid = payload['order_oid']
-        session_id = payload['session_id']
+        order_oid = payload["order_oid"]
+        session_id = payload["session_id"]
 
         try:
             order = CartOrder.objects.get(oid=order_oid)
         except ObjectDoesNotExist:
-            return Response({"message": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"message": "Order not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         order_items = CartOrderItem.objects.filter(order=order)
 
-        if session_id != 'null':
+        if session_id != "null":
             session = stripe.checkout.Session.retrieve(session_id)
 
             if session.payment_status == "paid":
                 if order.payment_status == "pending":
-                    order.payment_status = 'paid'
+                    order.payment_status = "paid"
                     order.save()
 
                     # Send in app Notification to customers
@@ -493,27 +520,52 @@ class PaymentSuccessView(generics.CreateAPIView):
                     # send notification to vendors
                     for o in order_items:
                         send_notification(vendor=o.vendor, order=order, order_item=o)
-                    
+
+                        context = {
+                            "order": order,
+                            "order_items": order_items,
+                            "vendor": o.vendor,
+                        }
+                        subject = "New Sale!"
+                        text_body = render_to_string(
+                            "email/vendor_sale.txt", context
+                        )
+                        html_body = render_to_string(
+                            "email/vendor_sale.html", context
+                        )
+
+                        msg = EmailMultiAlternatives(
+                            subject=subject,
+                            # from_email=settings.FROM_EMAIL,
+                            from_email=settings.EMAIL_HOST_USER,
+                            to=[o.vendor.user.email],
+                            body=text_body,
+                        )
+                        msg.attach_alternative(html_body, "text/html")
+                        msg.send()
+
                     # Send Email to Buyer
                     context = {
-                        'order': order,
-                        'order_items': order_items,
+                        "order": order,
+                        "order_items": order_items,
                     }
                     subject = "Order Placed Successfully"
-                    text_body = render_to_string("email/customer_order_confirmation.txt", context)
-                    html_body = render_to_string("email/customer_order_confirmation.html", context)
+                    text_body = render_to_string(
+                        "email/customer_order_confirmation.txt", context
+                    )
+                    html_body = render_to_string(
+                        "email/customer_order_confirmation.html", context
+                    )
 
                     msg = EmailMultiAlternatives(
                         subject=subject,
                         # from_email=settings.FROM_EMAIL,
                         from_email=settings.EMAIL_HOST_USER,
                         to=[order.email],
-                        body=text_body
+                        body=text_body,
                     )
                     msg.attach_alternative(html_body, "text/html")
                     msg.send()
-
-                    # Send Email to vendors
 
                     return Response({"message": "Payment Successful"})
                 else:
