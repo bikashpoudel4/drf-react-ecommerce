@@ -37,10 +37,10 @@ from store.models import (
     Tax,
 )
 import stripe
+import requests
 
 
 stripe.api_key = settings.STRIPE_SECRETE_KEY
-
 
 def send_notification(user=None, vendor=None, order=None, order_item=None):
     Notification.objects.create(
@@ -484,6 +484,16 @@ class StripeCheckoutView(generics.CreateAPIView):
 #         else:
 #             session = None
 
+def get_access_token(client_id, secrete_id):
+    token_url = 'https://api.sandbox.paypal.com/v1/oauth2/token'
+    data = {'grant_type': 'client_credentials'}
+    auth = (client_id, secrete_id)
+    response = requests.post(token_url, data=data, auth=auth)
+    if response.status_code == 200:
+        print("Access Token:", response.json()['access_token'])
+        return response.json()['access_token']
+    else:
+        raise Exception(f"Failed to get access token: {response.status_code}")
 
 class PaymentSuccessView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer
@@ -504,6 +514,8 @@ class PaymentSuccessView(generics.CreateAPIView):
             )
 
         order_items = CartOrderItem.objects.filter(order=order)
+
+        get_access_token(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_SECRETE_ID)
 
         if session_id != "null":
             session = stripe.checkout.Session.retrieve(session_id)
