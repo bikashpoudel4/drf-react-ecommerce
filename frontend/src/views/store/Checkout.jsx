@@ -1,56 +1,58 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 // import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
-import { useParams, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
-import apiInstance from '../../utils/axios';
-import { SERVER_URL } from '../../utils/constants';
-
-
-const initialOptions = {
-    clientId: 'test',
-    currency: "USD",
-    intent: "capture",
-};
+import apiInstance from "../../utils/axios";
+import { SERVER_URL, PAYPAL_CLIENT_ID } from "../../utils/constants";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+// import Checkout from './Checkout';
 
 function Checkout() {
-    const [order, setOrder] = useState([])
-    const [couponCode, setCouponCode] = useState("")
-    const [paymentLoading, setpaymentLoading] = useState(false)
+    const [order, setOrder] = useState([]);
+    const [couponCode, setCouponCode] = useState("");
+    const [paymentLoading, setpaymentLoading] = useState(false);
 
-    const param = useParams()
+    const param = useParams();
 
     const fetchOrderData = () => {
         apiInstance.get(`checkout/${param.order_oid}/`).then((res) => {
             setOrder(res.data);
-        })
-    }
+        });
+    };
 
     useEffect(() => {
-        fetchOrderData()
-    }, [])
+        fetchOrderData();
+    }, []);
 
     const applyCoupon = async () => {
-        const formdata = new FormData()
-        formdata.append("order_oid", order.oid)
-        formdata.append("coupon_code", couponCode)
+        const formdata = new FormData();
+        formdata.append("order_oid", order.oid);
+        formdata.append("coupon_code", couponCode);
 
         try {
-            const response = await apiInstance.post("coupon/", formdata)
-            fetchOrderData()
+            const response = await apiInstance.post("coupon/", formdata);
+            fetchOrderData();
             Swal.fire({
                 icon: response.data.icon,
                 title: response.data.message,
-            })
+            });
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     const payWithStripe = (event) => {
-        setpaymentLoading(true)
-        event.target.form.submit()
-    }
+        setpaymentLoading(true);
+        event.target.form.submit();
+    };
+
+    const initialOptions = {
+        clientId: PAYPAL_CLIENT_ID,
+        // clientId: "test",
+        currency: "USD",
+        intent: "capture",
+    };
 
     return (
         <main>
@@ -63,16 +65,25 @@ function Checkout() {
                                 {/* Section: Biling details */}
                                 <section className="">
                                     <div className="alert alert-warning">
-                                        <strong>Review Your Shipping &amp; Order Details </strong>
+                                        <strong>
+                                            Review Your Shipping &amp; Order
+                                            Details{" "}
+                                        </strong>
                                     </div>
                                     <form>
-                                        <h5 className="mb-4 mt-4">Shipping address</h5>
+                                        <h5 className="mb-4 mt-4">
+                                            Shipping address
+                                        </h5>
                                         {/* 2 column grid layout with text inputs for the first and last names */}
                                         <div className="row mb-4">
-
                                             <div className="col-lg-12">
                                                 <div className="form-outline">
-                                                    <label className="form-label" htmlFor="form6Example2">Full Name</label>
+                                                    <label
+                                                        className="form-label"
+                                                        htmlFor="form6Example2"
+                                                    >
+                                                        Full Name
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         readOnly
@@ -84,7 +95,12 @@ function Checkout() {
 
                                             <div className="col-lg-6 mt-4">
                                                 <div className="form-outline">
-                                                    <label className="form-label" htmlFor="form6Example2">Email</label>
+                                                    <label
+                                                        className="form-label"
+                                                        htmlFor="form6Example2"
+                                                    >
+                                                        Email
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         readOnly
@@ -96,7 +112,12 @@ function Checkout() {
 
                                             <div className="col-lg-6 mt-4">
                                                 <div className="form-outline">
-                                                    <label className="form-label" htmlFor="form6Example2">Mobile</label>
+                                                    <label
+                                                        className="form-label"
+                                                        htmlFor="form6Example2"
+                                                    >
+                                                        Mobile
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         readOnly
@@ -107,7 +128,12 @@ function Checkout() {
                                             </div>
                                             <div className="col-lg-6 mt-4">
                                                 <div className="form-outline">
-                                                    <label className="form-label" htmlFor="form6Example2">Address</label>
+                                                    <label
+                                                        className="form-label"
+                                                        htmlFor="form6Example2"
+                                                    >
+                                                        Address
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         readOnly
@@ -118,7 +144,12 @@ function Checkout() {
                                             </div>
                                             <div className="col-lg-6 mt-4">
                                                 <div className="form-outline">
-                                                    <label className="form-label" htmlFor="form6Example2">City</label>
+                                                    <label
+                                                        className="form-label"
+                                                        htmlFor="form6Example2"
+                                                    >
+                                                        City
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         readOnly
@@ -129,7 +160,12 @@ function Checkout() {
                                             </div>
                                             <div className="col-lg-6 mt-4">
                                                 <div className="form-outline">
-                                                    <label className="form-label" htmlFor="form6Example2">State</label>
+                                                    <label
+                                                        className="form-label"
+                                                        htmlFor="form6Example2"
+                                                    >
+                                                        State
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         readOnly
@@ -140,7 +176,12 @@ function Checkout() {
                                             </div>
                                             <div className="col-lg-6 mt-4">
                                                 <div className="form-outline">
-                                                    <label className="form-label" htmlFor="form6Example2">Country</label>
+                                                    <label
+                                                        className="form-label"
+                                                        htmlFor="form6Example2"
+                                                    >
+                                                        Country
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         readOnly
@@ -151,11 +192,21 @@ function Checkout() {
                                             </div>
                                         </div>
 
-
-                                        <h5 className="mb-4 mt-4">Billing address</h5>
+                                        <h5 className="mb-4 mt-4">
+                                            Billing address
+                                        </h5>
                                         <div className="form-check mb-2">
-                                            <input className="form-check-input me-2" type="checkbox" defaultValue="" id="form6Example8" defaultChecked="" />
-                                            <label className="form-check-label" htmlFor="form6Example8">
+                                            <input
+                                                className="form-check-input me-2"
+                                                type="checkbox"
+                                                defaultValue=""
+                                                id="form6Example8"
+                                                defaultChecked=""
+                                            />
+                                            <label
+                                                className="form-check-label"
+                                                htmlFor="form6Example8"
+                                            >
                                                 Same as shipping address
                                             </label>
                                         </div>
@@ -185,12 +236,12 @@ function Checkout() {
                                     </div>
 
                                     {/* Discount */}
-                                    {order.saved !== "0.00" &&
+                                    {order.saved !== "0.00" && (
                                         <div className="d-flex text-danger fw-bold justify-content-between mb-2">
                                             <span>Discount</span>
                                             <span>-${order.saved}</span>
                                         </div>
-                                    }
+                                    )}
                                     {/* Discount */}
 
                                     <hr className="my-4" />
@@ -199,22 +250,28 @@ function Checkout() {
                                         <span>${order.total}</span>
                                     </div>
                                     {/* APPLY COUPAN CODE */}
-                                    <section className='shadow mb-4 card p-4 rounded-5'>
-                                        <h4 className='mb-4'>Apply promo code</h4>
-                                        <div className='d-flex align-items-center'>
+                                    <section className="shadow mb-4 card p-4 rounded-5">
+                                        <h4 className="mb-4">
+                                            Apply promo code
+                                        </h4>
+                                        <div className="d-flex align-items-center">
                                             <input
-                                                type='text'
-                                                className='form-control rounded me-1'
-                                                placeholder='Promo code'
-                                                onChange={(e) => setCouponCode(e.target.value)}
+                                                type="text"
+                                                className="form-control rounded me-1"
+                                                placeholder="Promo code"
+                                                onChange={(e) =>
+                                                    setCouponCode(
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
                                             {/* <button
                                                 type='button'
                                                 className='btn btn-link btn-rounded overflow-visible'
                                             > */}
                                             <button
-                                                type='button'
-                                                className='btn btn-secondary btn-rounded overflow-visible'
+                                                type="button"
+                                                className="btn btn-secondary btn-rounded overflow-visible"
                                                 onClick={applyCoupon}
                                             >
                                                 Apply
@@ -224,23 +281,74 @@ function Checkout() {
                                     {/* APPLY COUPAN CODE */}
 
                                     {/* PAYMENT METHOD */}
-                                    {paymentLoading === true &&
-                                        <form action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`}>
-                                            <button onClick={payWithStripe} disabled type='submit' className='btn btn-primary btn-rounded w-100'>
-                                                Processing... <i className='fas fa-spinner fa-spin' />
+                                    {/* STRIPE */}
+                                    {paymentLoading === true && (
+                                        <form
+                                            action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`}
+                                        >
+                                            <button
+                                                onClick={payWithStripe}
+                                                disabled
+                                                type="submit"
+                                                className="btn btn-primary btn-rounded w-100"
+                                            >
+                                                Processing...{" "}
+                                                <i className="fas fa-spinner fa-spin" />
                                             </button>
                                         </form>
-                                    }
+                                    )}
 
-                                    {paymentLoading === false &&
-                                        <form action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`} method='POST'>
+                                    {paymentLoading === false && (
+                                        <form
+                                            action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`}
+                                            method="POST"
+                                        >
                                             {/* <div className="p-6 d-flex mt-4 mb-4"> */}
-                                            <button onClick={payWithStripe} type='submit' className='btn btn-primary btn-rounded w-100'>
-                                                Pay with stripe <i className='fas fa-credit-card' />
+                                            <button
+                                                onClick={payWithStripe}
+                                                type="submit"
+                                                className="btn btn-primary btn-rounded w-100"
+                                            >
+                                                Pay with stripe{" "}
+                                                <i className="fas fa-credit-card" />
                                             </button>
                                             {/* </div> */}
                                         </form>
-                                    }
+                                    )}
+                                    {/* STRIPE */}
+
+                                    {/* PAYPAL */}
+                                    <PayPalScriptProvider options={initialOptions}>
+
+                                        {/* <PayPalButtons className="mt-2" style={{ layout: "horizontal" }}/> */}
+                                        <PayPalButtons className="mt-3"                                             
+                                            createOrder={(data, actions) => {
+                                                return actions.order.create({
+                                                    purchase_units: [
+                                                        {
+                                                            amount: {
+                                                                currency_code: 'USD',
+                                                                value: order.total.toString()
+                                                            }
+                                                        }
+                                                    ]
+                                                })
+                                            }}
+
+                                            onApprove={(data, actions) => {
+                                                return actions.order.capture().then((details) => {
+                                                    const name = details.payer.name.given_name
+                                                    const status = details.status
+                                                    const payapl_order_id = data.orderID
+
+                                                    console.log(name);
+                                                    console.log(status);
+                                                    console.log(payapl_order_id);
+                                                })
+                                            }}
+                                            />
+                                    </PayPalScriptProvider>
+
                                     {/* PAYMENT METHOD */}
 
                                     {/* {loading === true &&
@@ -303,7 +411,6 @@ function Checkout() {
                                     {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paypal)</button> */}
-
                                 </section>
                             </div>
                         </div>
@@ -311,7 +418,7 @@ function Checkout() {
                 </div>
             </main>
         </main>
-    )
+    );
 }
 
-export default Checkout
+export default Checkout;

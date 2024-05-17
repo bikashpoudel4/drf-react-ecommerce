@@ -730,7 +730,7 @@
   dependencies:
     promise-polyfill "^8.3.0"
 
-"@paypal/react-paypal-js@^8.1.3":
+"@paypal/react-paypal-js@8.1.3":
   version "8.1.3"
   resolved "https://registry.yarnpkg.com/@paypal/react-paypal-js/-/react-paypal-js-8.1.3.tgz#2a46bd864eee02efada370ca50fab5a5bf38f4ff"
   integrity sha512-hEm27iYP/UHS3XPBhDdiK2U4PH1FxrOD5O3f9tstAVLJd82l/laCjq751HiESSm63PVOoFeKE41Fe1mYGab+oA==
@@ -739,9 +739,9 @@
     "@paypal/sdk-constants" "^1.0.122"
 
 "@paypal/sdk-constants@^1.0.122":
-  version "1.0.141"
-  resolved "https://registry.yarnpkg.com/@paypal/sdk-constants/-/sdk-constants-1.0.141.tgz#7a38d8331c8604cd49fed246a529d0beee8e428d"
-  integrity sha512-yE/fg3w8xwyfZRhb7orZFXgmmJ95WnONkBFxfppvmm4nXFkw3S6Bwr9EXgGvGuC22ouhfYuGgOFHreiOUYC5MQ==
+  version "1.0.148"
+  resolved "https://registry.yarnpkg.com/@paypal/sdk-constants/-/sdk-constants-1.0.148.tgz#3b09b88d4f49c694f86d0e9a85e56f570b262ff7"
+  integrity sha512-8Y3lQArNYoySa738bqR6B6b1D8OwwEz/Q8lTlkkPcSNVkIIEUi+9PRs/g7gpdVQbidEYN4P+YuzpOKJD9PfiPA==
   dependencies:
     hi-base32 "^0.5.0"
 
