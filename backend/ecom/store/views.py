@@ -18,6 +18,7 @@ from store.serializers import (
     CartOrderItemSerializer,
     CouponSerializer,
     NotificationSerializer,
+    ReviewSerializer,
 )
 from store.models import (
     Product,
@@ -665,3 +666,16 @@ class PaymentSuccessView(generics.CreateAPIView):
             return Response(
                 {"message": "Session ID is null"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class ReviewListAPIView(generics.ListAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        product_id = self.kwargs['product_id']
+
+        product = Product.objects.get(id=product_id)
+        reviews = Review.objects.filter(product=product)
+        return reviews
