@@ -12,9 +12,11 @@ function PaymentSuccess() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
+    const paypal_order_id = urlParams.get('paypal_order_id');
 
     console.log(param.order_oid);
     console.log(sessionId);
+    console.log("4m PaymentSuccess.jsx === PAYPAL ORDER ID", paypal_order_id);
 
     useEffect(() => {
         apiInstance.get(`checkout/${param.order_oid}/`).then((res) => {
@@ -26,11 +28,12 @@ function PaymentSuccess() {
         const formdata = new FormData()
         formdata.append("order_oid", param?.order_oid)
         formdata.append("session_id", sessionId)
+        formdata.append("paypal_order_id", paypal_order_id)
 
         // setIsLoading("Verifying")
         setStatus("Verifying")
 
-        apiInstance.post(`payment-success/${order.oid}/`, formdata).then((res) => {
+        apiInstance.post(`payment-success/${param.order_oid}/`, formdata).then((res) => {
             if (res.data.message === "Payment Successfull") {
                 setStatus("Payment Successfull")
             }
@@ -45,46 +48,8 @@ function PaymentSuccess() {
             // }
             console.log(res.data);
         })
-    }, [param?.order_oid])
-
-// function PaymentSuccess() {
-//     const [order, setOrder] = useState({});
-//     const [status, setStatus] = useState("Verifying");
-//     const param = useParams();
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const sessionId = urlParams.get('session_id');
-
-//     useEffect(() => {
-//         apiInstance.get(`checkout/${param.order_oid}/`)
-//             .then((res) => {
-//                 setOrder(res.data);
-//                 const formdata = new FormData();
-//                 formdata.append("order_oid", param?.order_oid);
-//                 formdata.append("session_id", sessionId);
-//                 setStatus("Verifying");
-//                 apiInstance.post(`payment-success/${res.data.oid}/`, formdata)
-//                     .then((res) => {
-//                         if (res.data.message === "Payment Successful") {
-//                             setStatus("Payment Successful");
-//                         } else if (res.data.message === "Already Paid") {
-//                             setStatus("Already Paid");
-//                         } else if (res.data.message === "Your Invoice is Unpaid") {
-//                             setStatus("Your Invoice is Unpaid");
-//                         } else {
-//                             setStatus("An Error Occurred");
-//                         }
-//                         console.log(res.data);
-//                     })
-//                     .catch((error) => {
-//                         console.error("Error:", error);
-//                         setStatus("An Error Occurred");
-//                     });
-//             })
-//             .catch((error) => {
-//                 console.error("Error:", error);
-//                 setStatus("An Error Occurred");
-//             });
-//     }, [param.order_oid, sessionId]);
+    // }, [param?.order_oid])
+    }, [param.order_oid, paypal_order_id, sessionId])
 
     return (
         <>

@@ -1,0 +1,130 @@
+
+ {/* PAYPAL */}
+                                    <PayPalScriptProvider options={initialOptions}>
+
+                                        {/* <PayPalButtons className="mt-2" style={{ layout: "horizontal" }}/> */}
+                                        <PayPalButtons className="mt-3"                                             
+                                            createOrder={(data, actions) => {
+                                                return actions.order.create({
+                                                    purchase_units: [
+                                                        {
+                                                            amount: {
+                                                                currency_code: 'USD',
+                                                                value: order.total.toString()
+                                                            }
+                                                        }
+                                                    ]
+                                                })
+                                            }}
+
+                                            onApprove={(data, actions) => {
+                                                return actions.order.capture().then((details) => {
+                                                    const name = details.payer.name.given_name;
+                                                    const status = details.status;
+                                                    const paypal_order_id = data.orderID;
+                            
+                                                    if (status === "COMPLETED") {
+                                                        navigate(`/payment-success/${order.oid}/?paypal_order_id=${paypal_order_id}`);
+                                                    }
+                            
+                                                    console.log(name);
+                                                    // console.log(status);
+                                                    // console.log(paypal_order_id);
+                                                });
+                                            }}
+                                            />
+                                    </PayPalScriptProvider>
+
+
+
+-------------------------NEXT
+
+{/* PAYPAL */}
+                                    <PayPalScriptProvider
+                                        options={initialOptions}
+                                    >
+                                        <PayPalButtons
+                                            className="mt-3"
+                                            createOrder={(data, actions) => {
+                                                return actions.order
+                                                    .create({
+                                                        purchase_units: [
+                                                            {
+                                                                amount: {
+                                                                    currency_code:
+                                                                        "USD",
+                                                                    value: order.total.toString(),
+                                                                },
+                                                            },
+                                                        ],
+                                                    })
+                                                    .catch((error) => {
+                                                        console.error(
+                                                            "Error creating order:",
+                                                            error
+                                                        );
+                                                        // Handle error gracefully, e.g., show a notification to the user
+                                                    });
+                                            }}
+                                            onApprove={(data, actions) => {
+                                                return actions.order
+                                                    .capture()
+                                                    .then((details) => {
+                                                        const name =
+                                                            details.payer.name
+                                                                .given_name;
+                                                        const status =
+                                                            details.status;
+                                                        const paypal_order_id =
+                                                            data.orderID;
+
+                                                        console.log(
+                                                            "Order capture details:",
+                                                            details
+                                                        );
+
+                                                        if (
+                                                            status ===
+                                                            "COMPLETED"
+                                                        ) {
+                                                            navigate(
+                                                                `/payment-success/${order.oid}/?paypal_order_id=${paypal_order_id}`
+                                                            );
+                                                        } else {
+                                                            console.error(
+                                                                "Payment not completed:",
+                                                                details
+                                                            );
+                                                            // Handle non-completed payment status
+                                                        }
+
+                                                        console.log(
+                                                            "Payer Name:",
+                                                            name
+                                                        );
+                                                        console.log(
+                                                            "Payment Status:",
+                                                            status
+                                                        );
+                                                        console.log(
+                                                            "PayPal Order ID:",
+                                                            paypal_order_id
+                                                        );
+                                                    })
+                                                    .catch((error) => {
+                                                        console.error(
+                                                            "Error capturing order:",
+                                                            error
+                                                        );
+                                                        // Handle error gracefully, e.g., show a notification to the user
+                                                    });
+                                            }}
+                                            onError={(err) => {
+                                                console.error(
+                                                    "PayPal Buttons Error:",
+                                                    err
+                                                );
+                                                // Handle PayPal Buttons error
+                                            }}
+                                        />
+                                    </PayPalScriptProvider>

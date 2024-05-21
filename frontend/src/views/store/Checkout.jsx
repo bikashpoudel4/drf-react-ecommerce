@@ -14,6 +14,7 @@ function Checkout() {
     const [paymentLoading, setpaymentLoading] = useState(false);
 
     const param = useParams();
+    const navigate = useNavigate();
 
     const fetchOrderData = () => {
         apiInstance.get(`checkout/${param.order_oid}/`).then((res) => {
@@ -318,10 +319,11 @@ function Checkout() {
                                     {/* STRIPE */}
 
                                     {/* PAYPAL */}
+
                                     <PayPalScriptProvider options={initialOptions}>
 
                                         {/* <PayPalButtons className="mt-2" style={{ layout: "horizontal" }}/> */}
-                                        <PayPalButtons className="mt-3"                                             
+                                        <PayPalButtons className="mt-3"
                                             createOrder={(data, actions) => {
                                                 return actions.order.create({
                                                     purchase_units: [
@@ -337,80 +339,21 @@ function Checkout() {
 
                                             onApprove={(data, actions) => {
                                                 return actions.order.capture().then((details) => {
-                                                    const name = details.payer.name.given_name
-                                                    const status = details.status
-                                                    const payapl_order_id = data.orderID
-
-                                                    console.log(name);
-                                                    console.log(status);
-                                                    console.log(payapl_order_id);
-                                                })
-                                            }}
-                                            />
-                                    </PayPalScriptProvider>
-
-                                    {/* PAYMENT METHOD */}
-
-                                    {/* {loading === true &&
-                                                <>
-                                                    <input readOnly value={couponCode} name="couponCode" type="text" className='form-control' style={{ border: "dashed 1px gray" }} placeholder='Enter Coupon Code' id="" />
-                                                    <button disabled className='btn btn-success ms-1'><i className='fas fa-spinner fa-spin'></i></button>
-                                                </>
-                                            }
-
-                                            {loading === false &&
-                                                <>
-                                                    <input onChange={handleChange} value={couponCode} name="couponCode" type="text" className='form-control' style={{ border: "dashed 1px gray" }} placeholder='Enter Coupon Code' id="" />
-                                                    <button onClick={appleCoupon} className='btn btn-success ms-1'><i className='fas fa-check-circle'></i></button>
-                                                </>
-                                            }
-                                        </div>
-
-                                        {paymentLoading === true &&
-                                            <form action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`} method='POST'>
-                                                <button onClick={payWithStripe} type="submit" className="btn btn-primary btn-rounded w-100 mt-2" style={{ backgroundColor: "#635BFF" }}>Processing... <i className='fas fa-spinner fa-spin'></i> </button>
-                                            </form>
-                                        }
-
-                                        {paymentLoading === false &&
-                                            <form action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`} method='POST'>
-                                                <button onClick={payWithStripe} type="submit" className="btn btn-primary btn-rounded w-100 mt-2" style={{ backgroundColor: "#635BFF" }}>Pay Now (Stripe)</button>
-                                            </form>
-                                        } */}
-
-                                    {/* <PayPalScriptProvider options={initialOptions}>
-                                        <PayPalButtons className='mt-3'
-                                            createOrder={(data, actions) => {
-                                                return actions.order.create({
-                                                    purchase_units: [
-                                                        {
-                                                            amount: {
-                                                                currency_code: "USD",
-                                                                value: order.total.toString()
-                                                            }
-                                                        }
-                                                    ]
-                                                })
-                                            }}
-
-                                            onApprove={(data, actions) => {
-                                                return actions.order.capture().then((details) => {
                                                     const name = details.payer.name.given_name;
                                                     const status = details.status;
-                                                    const payapl_order_id = data.orderID;
+                                                    const paypal_order_id = data.orderID;
 
-                                                    console.log(status);
                                                     if (status === "COMPLETED") {
-                                                        navigate(`/payment-success/${order.oid}/?payapl_order_id=${payapl_order_id}`)
+                                                        navigate(`/payment-success/${order.oid}/?paypal_order_id=${paypal_order_id}`);
                                                     }
-                                                })
+                                                });
                                             }}
                                         />
-                                    </PayPalScriptProvider> */}
+                                    </PayPalScriptProvider>
 
-                                    {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
-                    <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
-                    <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paypal)</button> */}
+                                    {/* PAYPAL */}
+
+                                    {/* PAYMENT METHOD */}                                   
                                 </section>
                             </div>
                         </div>
