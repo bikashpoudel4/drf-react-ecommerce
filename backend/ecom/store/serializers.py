@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from userauths.serializers import ProfileSerializer
 from vendor.models import Vendor
 
 from store.models import (
@@ -163,10 +164,10 @@ class ProductFaqSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-
+    profile = ProfileSerializer()
     class Meta:
         model = Review
-        fields = "__all__"
+        fields = ["id", "review", "rating", "user", "profile", "date"]
 
     def __init__(self, *args, **kwargs):
         super(ReviewSerializer, self).__init__(*args, **kwargs)
