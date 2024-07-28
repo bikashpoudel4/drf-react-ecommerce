@@ -31,6 +31,8 @@ urlpatterns = [
     path('coupon/', store_views.CouponAPIView.as_view()),
     # Reviews
     path('reviews/<product_id>/', store_views.ReviewListAPIView.as_view()),
+    # Search
+    path('search/', store_views.SearchProductAPIView.as_view()),
     
     # Payments
     path('stripe-checkout/<order_oid>/', store_views.StripeCheckoutView.as_view()),
