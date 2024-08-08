@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
 import apiInstance from '../../utils/axios';
@@ -6,10 +6,10 @@ import GetCurrentAddress from '../plugin/UserCountry';
 import UserData from '../plugin/UserData';
 import CardID from '../plugin/CardID';
 import moment from 'moment'
+import { CartContext } from '../plugin/Context';
 
 
 function ProductDetail() {
-
     // [array: for lists] {dict: for one product}
     const [product, setProduct] = useState({})
     const [specifications, setSpecifications] = useState([])
@@ -25,6 +25,8 @@ function ProductDetail() {
     const [createReview, setCreateReview] = useState({
         user_id: 0, product_id: product?.id, review: "", rating: 0
     })
+
+    const [cartCount, setCartCount] = useContext(CartContext)
 
     const param = useParams()
     const curretAddress = GetCurrentAddress()
@@ -72,14 +74,19 @@ function ProductDetail() {
             formdata.append("size", sizeValue)
             formdata.append("color", colorValue)
             formdata.append("cart_id", cart_id)
+            
+            // make a post request to the cart api view
+            await apiInstance.post(`cart-view/`, formdata)
 
-            const response = await apiInstance.post(`cart-view/`, formdata)
-            console.log(response.data);
+            // Fetch updated cart items
+            const url = userData ? `cart-list/${cart_id}/${userData?.user_id}/` : `cart-list/${cart_id}/`
+            apiInstance.get(url).then((res) => {
+                setCartCount(res.data.length)
+            })
 
         } catch (error) {
             console.log(error);
         }
-
     };
 
     const fetchReviewData = () => {

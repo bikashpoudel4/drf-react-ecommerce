@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from userauths.models import User, Profile
-from userauths.serializers import MyTokenObtainPairSerializer, RegisterSerializer, UserSerializer
+from userauths.serializers import MyTokenObtainPairSerializer, ProfileSerializer, RegisterSerializer, UserSerializer
 
 import random
 import shortuuid
@@ -79,3 +79,15 @@ class PasswordChangeView(generics.CreateAPIView):
             return Response( {"message": "Password Changed Successfully"}, status=status.HTTP_201_CREATED)
         else:
             return Response( {"message": "An Error Occured"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class ProfileView(generics.RetrieveAPIView):
+    serializer_class = ProfileSerializer
+    permession_classes = [AllowAny]
+    
+    def get_object(self):
+        user_id = self.kwargs['user_id']
+
+        user = User.objects.get(id=user_id)
+        profile = Profile.objects.get(user=user)
+        return profile

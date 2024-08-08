@@ -82,6 +82,7 @@ class CartAdmin(admin.ModelAdmin):
 class CartOrderAdmin(admin.ModelAdmin):
     list_display = [
         "oid",
+        "buyer",
         "payment_status",
         "total",
     ]

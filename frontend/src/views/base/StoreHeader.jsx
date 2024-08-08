@@ -1,8 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { useAuthStore } from "../../store/auth";
+import { CartContext } from "../plugin/Context";
 
 function StoreHeader() {
     const [isLoggedIn, user] = useAuthStore((state) => [
@@ -10,6 +11,9 @@ function StoreHeader() {
         state.user,
     ]);
 
+
+    const cartCount = useContext(CartContext);
+    console.log(cartCount);
     const [search, setSearch] = useState("");
 
     const handleSearchChange = (event) => {
@@ -270,7 +274,7 @@ function StoreHeader() {
                         {/* <Link className="btn btn-danger" to="/cart/"><i className='fas fa-shopping-cart'></i> <span id='cart-total-items'>{cartCount || 0}</span></Link> */}
                         <Link className="btn btn-danger" to="/cart/">
                             <i className="fas fa-shopping-cart"></i>{" "}
-                            <span id="cart-total-items"></span>
+                            <span id="cart-total-items">{cartCount}</span>
                         </Link>
                     </div>
                 </div>

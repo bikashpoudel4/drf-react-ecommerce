@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import apiInstance from '../../utils/axios';
 import Swal from 'sweetalert2';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import UserData from "../plugin/UserData";
 import CardID from "../plugin/CardID"
 import GetCurrentAddress from '../plugin/UserCountry';
+import { CartContext } from '../plugin/Context';
 
 
 const Toast = Swal.mixin({
@@ -32,6 +33,7 @@ function Cart() {
     const [state, setState] = useState('')
     const [country, setCountry] = useState('')
     // Shipping Address - Personal Info
+    const [cartCount, setCartCount] = useContext(CartContext)
 
     const userData = UserData()
     const cart_id = CardID()
@@ -42,6 +44,7 @@ function Cart() {
         const url = userId ? `cart-list/${cartId}/${userId}/` : `cart-list/${cartId}/`
         apiInstance.get(url).then((res) => {
             setCart(res.data)
+            setCartCount(res.data.length)
         })
     }
 
