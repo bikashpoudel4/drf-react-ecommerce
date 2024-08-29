@@ -164,14 +164,16 @@ PAYPAL_SECRETE_ID = env("PAYPAL_SECRETE_ID")
 #     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
 # }
 # FROM_EMAIL = 'bikashpoudel4@gmail.com'
+FROM_EMAIL = env("FROM_EMAIL")
 # EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 # DEFAULT_FROM_EMAIL= 'bikashpoudel4@gmail.com'
+DEFAULT_FROM_EMAIL= env("DEFAULT_FROM_EMAIL")
 # SERVER_EMAIL= 'bikashpoudel4@gmail.com'
 
 # ######## SMTP# # HOST EMAIL Settings [SMTP]------SMTP-----
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-SITE_NAME = "XoXo"
+SITE_NAME = "EmooD"
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = 587

@@ -1,16 +1,27 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 
 from userauths.models import User, Profile
 from userauths.serializers import MyTokenObtainPairSerializer, ProfileSerializer, RegisterSerializer, UserSerializer
 
 import random
 import shortuuid
+import json
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -27,29 +38,68 @@ def generate_otp():
     unique_key = uuid_key[:6] # grabs only first 6 of the char
     return unique_key
 
-class PasswordResetEmailVerify(generics.RetrieveAPIView):
-    permission_classes = (AllowAny, )
-    serializer_class = UserSerializer
+# class PasswordResetEmailVerify(generics.RetrieveAPIView):
+#     permission_classes = (AllowAny, )
+#     serializer_class = UserSerializer
 
+#     def get_object(self):
+#         email = self.kwargs['email']
+#         user = User.objects.get(email=email)
+
+        
+#         if user:
+#             user.otp = generate_otp()
+#             user.save()
+
+#             uidb64 = user.pk
+#             otp = user.otp
+
+#             # link = f"http://127.0.0.1:8000/create-new-password?otp={otp}&uidb64={uidb64}"
+#             link = f"http://localhost:5173/create-new-password?otp={otp}&uidb64={uidb64}"
+#             print("------PasswordResetEmailVerify--------link---Otp", link)
+
+#             # Send Email
+
+            
+#         return user
+
+class PasswordResetEmailVerify(generics.RetrieveAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = UserSerializer
+    
     def get_object(self):
         email = self.kwargs['email']
         user = User.objects.get(email=email)
-
         
         if user:
             user.otp = generate_otp()
+            uidb64 = user.pk
+            
+             # Generate a token and include it in the reset link sent via email
+            refresh = RefreshToken.for_user(user)
+            reset_token = str(refresh.access_token)
+
+            # Store the reset_token in the user model for later verification
+            user.reset_token = reset_token
             user.save()
 
-            uidb64 = user.pk
-            otp = user.otp
-
-            # link = f"http://127.0.0.1:8000/create-new-password?otp={otp}&uidb64={uidb64}"
-            link = f"http://localhost:5173/create-new-password?otp={otp}&uidb64={uidb64}"
-            print("------PasswordResetEmailVerify--------link---Otp", link)
-
-            # Send Email
-
+            link = f"http://localhost:5173/create-new-password?otp={user.otp}&uidb64={uidb64}&reset_token={reset_token}"
             
+            merge_data = {
+                'link': link, 
+                'username': user.username, 
+                # 'full_name': user.full_name, 
+            }
+            subject = f"Password Reset Request"
+            text_body = render_to_string("email/password_reset.txt", merge_data)
+            html_body = render_to_string("email/password_reset.html", merge_data)
+            
+            msg = EmailMultiAlternatives(
+                subject=subject, from_email=settings.FROM_EMAIL,
+                to=[user.email], body=text_body
+            )
+            msg.attach_alternative(html_body, "text/html")
+            msg.send()
         return user
 
 class PasswordChangeView(generics.CreateAPIView):
