@@ -213,7 +213,7 @@ class CartOrder(models.Model):
 
     def __str__(self):
         return self.oid
-    
+
     def orderitem(self):
         return CartOrderItem.objects.filter(order=self)
 
@@ -275,6 +275,14 @@ class Review(models.Model):
         (5, "5 Star"),
     )
 
+    # RATING = (
+    #     (1,  "★☆☆☆☆"),
+    #     (2,  "★★☆☆☆"),
+    #     (3,  "★★★☆☆"),
+    #     (4,  "★★★★☆"),
+    #     (5,  "★★★★★"),
+    # )
+
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     review = models.TextField()
@@ -313,7 +321,7 @@ class Wishlist(models.Model):
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    vendor = models.ForeignKey(Vendor, on_delete= models.SET_NULL, null=True, blank=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     order = models.ForeignKey(
         CartOrder, on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -344,13 +352,15 @@ class Coupon(models.Model):
 
 class Tax(models.Model):
     country = models.CharField(max_length=100)
-    rate = models.IntegerField(default=5, help_text="Numbers added here are in percentage e.g 5%")
+    rate = models.IntegerField(
+        default=5, help_text="Numbers added here are in percentage e.g 5%"
+    )
     active = models.BooleanField(default=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.country
-    
+
     class Meta:
         verbose_name_plural = "Taxes"
-        ordering = ['country']
+        ordering = ["country"]
