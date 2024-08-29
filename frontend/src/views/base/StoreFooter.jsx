@@ -3,7 +3,8 @@ import React from 'react'
 function StoreFooter() {
   return (
     <div>
-      <footer className="bg-light text-center text-lg-start">
+      {/* <footer className="bg-light text-center text-lg-start"> */}
+      <footer className="bg-dark text-center text-lg-start">
         {/* Grid container */}
         <div className="container-fluid p-4">
           <div className="row">
@@ -62,7 +63,7 @@ function StoreFooter() {
           {/*Grid row*/}
           <div className="row">
             {/*Grid column*/}
-            <div className="col-lg-4 mb-4 mb-lg-0">
+            <div className="col-lg-4 mb-4 mb-lg-0 text-muted text-opacity-70">
               <p>
                 <strong>About us</strong>
               </p>
@@ -75,28 +76,28 @@ function StoreFooter() {
             </div>
             {/*Grid column*/}
             {/*Grid column*/}
-            <div className="col-lg-3 mb-4 mb-lg-0">
+            <div className="col-lg-3 mb-4 mb-lg-0 text-muted">
               <p>
                 <strong>Useful links</strong>
               </p>
               <ul className="list-unstyled mb-0">
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Privacy policy
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Media
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Job offers
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Cooperation
                   </a>
                 </li>
@@ -104,28 +105,28 @@ function StoreFooter() {
             </div>
             {/*Grid column*/}
             {/*Grid column*/}
-            <div className="col-lg-3 mb-4 mb-lg-0">
+            <div className="col-lg-3 mb-4 mb-lg-0 text-muted">
               <p>
                 <strong>Products</strong>
               </p>
               <ul className="list-unstyled">
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Electronics
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Fashion
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Beauty
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Automotive
                   </a>
                 </li>
@@ -133,28 +134,28 @@ function StoreFooter() {
             </div>
             {/*Grid column*/}
             {/*Grid column*/}
-            <div className="col-lg-2 mb-4 mb-lg-0">
+            <div className="col-lg-2 mb-4 mb-lg-0 text-muted">
               <p>
                 <strong>Support</strong>
               </p>
               <ul className="list-unstyled">
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Complaints
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Help center
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     Community
                   </a>
                 </li>
                 <li>
-                  <a href="#!" className="text-dark">
+                  <a href="#!" className="text-muted text-decoration-none">
                     FAQ
                   </a>
                 </li>
@@ -167,12 +168,12 @@ function StoreFooter() {
         {/* Grid container */}
         {/* Copyright */}
         <div
-          className="text-center p-3"
+          className="text-center p-3 text-muted"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
         >
-          © 2024 Copyright:
-          <a className="text-dark" href="#">
-            My Shop
+          © 2024 Copyright: &nbsp;
+          <a className="text-muted" href="#">
+            EmooD
           </a>
         </div>
         {/* Copyright */}
