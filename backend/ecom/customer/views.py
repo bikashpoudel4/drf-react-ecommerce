@@ -41,8 +41,8 @@ import stripe
 import requests
 
 class OrdersAPIView(generics.ListAPIView):
-    serializer_class = CartOrderItemSerializer
-    permission_classes = [AllowAny]
+    serializer_class = CartOrderSerializer
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
@@ -51,9 +51,11 @@ class OrdersAPIView(generics.ListAPIView):
         orders = CartOrder.objects.filter(buyer=user, payment_status="paid")
         return orders
     
-class OrderDetailAPIView(generics.RetrieveAPIView):
+
+class OrdersDetailAPIView(generics.RetrieveAPIView):
     serializer_class = CartOrderSerializer
-    permession_classes = [AllowAny]
+    permission_classes = (AllowAny,)
+    lookup_field = 'user_id'
 
     def get_object(self):
         user_id = self.kwargs['user_id']
@@ -61,5 +63,5 @@ class OrderDetailAPIView(generics.RetrieveAPIView):
 
         user = User.objects.get(id=user_id)
 
-        order = CartOrder.objects.get(buyer=user, oid=order_oid, payment_status="paid")
+        order = CartOrder.objects.get(buyer=user, payment_status="paid", oid=order_oid)
         return order

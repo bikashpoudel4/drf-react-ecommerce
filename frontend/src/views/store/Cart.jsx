@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom'
 
 import UserData from "../plugin/UserData";
-import CardID from "../plugin/CardID"
+import CardID from "../plugin/CartID"
 import GetCurrentAddress from '../plugin/UserCountry';
 import { CartContext } from '../plugin/Context';
 

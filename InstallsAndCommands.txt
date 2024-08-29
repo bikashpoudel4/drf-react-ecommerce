@@ -1,0 +1,7 @@
+CREATE Vite + React app
+    - yarn create vite . --template react
+
+Run app
+    - yarn dev
+
+1. - yarn add axios dayjs jwt-decode js-cookie react-router-dom@6.10.0 zustand

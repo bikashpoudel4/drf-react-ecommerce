@@ -55,7 +55,54 @@ class ColorSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# class ProductSerializer(serializers.ModelSerializer):
+#     gallary = GallarySerializer(many=True, read_only=True)
+#     color = ColorSerializer(many=True, read_only=True)
+#     specification = SpecificationSerializer(many=True, read_only=True)
+#     size = SizeSerializer(many=True, read_only=True)
+
+#     class Meta:
+#         model = Product
+#         fields = [
+#             "id",
+#             "title",
+#             "image",
+#             "description",
+#             "category",
+#             "price",
+#             "old_price",
+#             "shipping_amount",
+#             "stock_qty",
+#             "in_stock",
+#             "status",
+#             "featured",
+#             "views",
+#             "rating",
+#             "vendor",
+#             "gallary",
+#             "color",
+#             "specification",
+#             "size",
+#             "product_rating",  # from def product_rating
+#             "rating_count",  # from def rating_count
+#             "pid",
+#             "slug",
+#             "date",
+#         ]
+
+#     def __init__(self, *args, **kwargs):
+#         super(ProductSerializer, self).__init__(*args, **kwargs)
+#         # Customize serialization depth based on the request method.
+#         request = self.context.get("request")
+#         if request and request.method == "POST":
+#             # When creating a new product, set serialization depth to 0.
+#             self.Meta.depth = 0
+#         else:
+#             # For other methods, set serialization depth to 3.
+#             self.Meta.depth = 3
+
 class ProductSerializer(serializers.ModelSerializer):
+    # Assuming these are related models and `many=True` indicates a many-to-many or one-to-many relationship
     gallary = GallarySerializer(many=True, read_only=True)
     color = ColorSerializer(many=True, read_only=True)
     specification = SpecificationSerializer(many=True, read_only=True)
@@ -100,6 +147,17 @@ class ProductSerializer(serializers.ModelSerializer):
         else:
             # For other methods, set serialization depth to 3.
             self.Meta.depth = 3
+
+    # Add this method if you need to handle nested serializers dynamically
+    def to_representation(self, instance):
+        representation = super(ProductSerializer, self).to_representation(instance)
+
+        # Check if the slug field exists in the related objects
+        if 'slug' not in representation:
+            representation['slug'] = instance.slug if hasattr(instance, 'slug') else None
+
+        return representation
+
 
 
 class CartSerializer(serializers.ModelSerializer):

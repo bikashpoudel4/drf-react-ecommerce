@@ -1,53 +1,53 @@
-import React from 'react'
-import Sidebar from './Sidebar'
+import React from "react";
+import Sidebar from "./Sidebar";
 
-import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import apiInstance from '../../utils/axios'
-import UserData from '../plugin/UserData'
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import apiInstance from "../../utils/axios";
+import UserData from "../plugin/UserData";
 
 function Account() {
-    const [profile, setProfile] = useState({})
-    const userData = UserData()
+  const [profile, setProfile] = useState({});
+  const userData = UserData();
 
-    useEffect(() => {
-        apiInstance.get(`user/profile/${userData?.user_id}/`).then((res) => {
-            setProfile(res.data);
-            console.log(profile);
-        })
-    }, [])
+  useEffect(() => {
+    apiInstance.get(`user/profile/${userData?.user_id}/`).then((res) => {
+      setProfile(res.data);
+      console.log(profile);
+    });
+  }, []);
 
-    return (    
-        <main className="mt-5">
-        <div className="container">
-            <section className="">
-            <div className="row">                
-                <Sidebar/>
-                <div className="col-lg-9 mt-1">
-                <main className="mb-5" style={{}}>
-                    <div className="container px-4">
-                    <section className=""></section>
-                    <section className="">
-                        <div className="row rounded shadow p-3">
-                        <h3>Hi, {profile.full_name} </h3>
-                        <div className="col-lg-12 mb-4 mb-lg-0 h-100">
-                            From your account dashboard. you can easily check &amp;
-                            view your <a href="">orders</a>, manage your{" "}
-                            <a href="">
-                            shipping
-                            </a>
-                            <a href="">Edit Account</a>
-                        </div>
-                        </div>
-                    </section>
+  return (
+    <main className="mt-5">
+      <div className="container">
+        <section className="">
+          <div className="row">
+            {/* SIDE BAR */}
+            <Sidebar/>
+            {/* SIDE BAR */}
+            <div className="col-lg-9 mt-1">
+              <main className="mb-5" style={{}}>
+                <div className="container px-4">
+                  <section className=""></section>
+                  <section className="">
+                    <div className="row rounded shadow p-3">
+                      <h2>Hi {profile.full_name}, </h2>
+                      <div className="col-lg-12 mb-4 mb-lg-0 h-100">
+                        From your account dashboard. you can easily check &amp;
+                        view your <a href="">orders</a>, manage your{" "}
+                        <a href="">shipping</a>
+                        <a href="">Edit Account</a>
+                      </div>
                     </div>
-                </main>
+                  </section>
                 </div>
+              </main>
             </div>
-            </section>
-        </div>
-        </main>
-    )
+          </div>
+        </section>
+      </div>
+    </main>
+  );
 }
 
-export default Account
+export default Account;

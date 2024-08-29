@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import apiInstance from '../../utils/axios';
 import GetCurrentAddress from '../plugin/UserCountry';
 import UserData from '../plugin/UserData';
-import CardID from '../plugin/CardID';
+import CardID from '../plugin/CartID';
 import moment from 'moment'
 import { CartContext } from '../plugin/Context';
 
