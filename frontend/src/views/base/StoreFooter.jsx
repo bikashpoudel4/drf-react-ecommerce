@@ -3,8 +3,8 @@ import React from 'react'
 function StoreFooter() {
   return (
     <div>
-      {/* <footer className="bg-light text-center text-lg-start"> */}
-      <footer className="bg-dark text-center text-lg-start">
+      <footer className="bg-light text-center text-lg-start">
+      {/* <footer className="bg-dark text-center text-lg-start"> */}
         {/* Grid container */}
         <div className="container-fluid p-4">
           <div className="row">

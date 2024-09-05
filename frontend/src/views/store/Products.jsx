@@ -9,11 +9,11 @@ import Swal from 'sweetalert2'
 import { CartContext } from "../plugin/Context";
 
 const Toast = Swal.mixin({
-    toast:true,
-    position:"top",
-    showConfirmButton:false,
-    timer:1500,
-    timerProgressBar:true
+    toast: true,
+    position: "top",
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true
 })
 
 function Products() {
@@ -74,18 +74,37 @@ function Products() {
 
         const response = await apiInstance.post(`cart-view/`, formdata)
         console.log(response.data);
-        
+
         Toast.fire({
             icon: "success",
             title: response.data.message,
         })
 
-        
+
         const url = userData ? `cart-list/${cart_id}/${userData?.user_id}/` : `cart-list/${cart_id}/`
         apiInstance.get(url).then((res) => {
             setCartCount(res.data.length)
         })
 
+    }
+
+    const addToWishList = async (productID, userID) => {
+        try {
+            const formdata = new FormData()
+            formdata.append("product_id", productID)
+            formdata.append("user_id", userID)
+
+            const response = await apiInstance.post(`customer/wishlist/${userID}/`, formdata)
+            console.log(response.data)
+
+            Swal.fire({
+                icon: "success",
+                title: response.data.message,
+            })
+        } catch (error) {
+            console.log(error);
+
+        }
     }
 
 
@@ -214,6 +233,7 @@ function Products() {
                                                 <button
                                                     type="button"
                                                     className="btn btn-danger px-3 me-1 ms-2"
+                                                    onClick={() => addToWishList(p.id, userData?.user_id)}
                                                 >
                                                     <i className="fas fa-heart" />
                                                 </button>
