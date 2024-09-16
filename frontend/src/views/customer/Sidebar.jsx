@@ -69,7 +69,7 @@ function Sidebar() {
                 to={"/customer/notifications/"}
                 className="fw-bold text-dark"
               >
-                <i className="fas fa-bell fa-shake me-2"></i> Notification
+                <i className="fas fa-bell fa-shake me-2"></i> Notifications
               </Link>
             </div>
             <span className="badge bg-primary rounded-pill">14</span>
@@ -77,7 +77,7 @@ function Sidebar() {
           <li className="list-group-item d-flex justify-content-between align-items-start">
             <div className="ms-2 me-auto">
               <Link to={"/customer/settings/"} className="fw-bold text-dark">
-                <i className="fas fa-gear fa-spin me-2"></i> Setting
+                <i className="fas fa-gear fa-spin me-2"></i> Settings
               </Link>
             </div>
           </li>

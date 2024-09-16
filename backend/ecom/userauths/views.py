@@ -114,10 +114,10 @@ class PasswordChangeView(generics.CreateAPIView):
         # reset_token = payload['reset_token']
         password = payload['password']
 
-        print("otp ======", otp)
-        print("uidb64 ======", uidb64)
-        # print("reset_token ======", reset_token)
-        print("password ======", password)
+        # print("otp ======", otp)
+        # print("uidb64 ======", uidb64)
+        # # print("reset_token ======", reset_token)
+        # print("password ======", password)
 
         user = User.objects.get(id=uidb64, otp=otp)
         if user:
@@ -131,7 +131,7 @@ class PasswordChangeView(generics.CreateAPIView):
             return Response( {"message": "An Error Occured"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-class ProfileView(generics.RetrieveAPIView):
+class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     permession_classes = [AllowAny]
     

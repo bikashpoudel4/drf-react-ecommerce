@@ -25,6 +25,8 @@ import MainWrapper from "./layout/MainWrapper";
 import Orders from "./views/customer/Orders";
 import OrderDetail from "./views/customer/OrderDetail";
 import Wishlist from "./views/customer/Wishlist";
+import CustomerNotification from "./views/customer/CustomerNotification";
+import CustomerSettings from "./views/customer/Settings";
 
 
 function App() {
@@ -68,6 +70,8 @@ function App() {
                     <Route path="/customer/orders/" element={<PrivateRoute><Orders /></PrivateRoute>} />
                     <Route path="/customer/order/detail/:order_oid/" element={<PrivateRoute><OrderDetail /></PrivateRoute>} />
                     <Route path="/customer/wishlist/" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
+                    <Route path="/customer/notifications/" element={<PrivateRoute><CustomerNotification /></PrivateRoute>} />
+                    <Route path="/customer/settings/" element={<PrivateRoute><CustomerSettings /></PrivateRoute>} />
                 </Routes>
             </MainWrapper>
             <StoreFooter/>
