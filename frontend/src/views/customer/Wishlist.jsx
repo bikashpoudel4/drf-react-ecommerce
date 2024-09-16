@@ -105,7 +105,6 @@ function Wishlist() {
                                                     <h4 className='p-4'>No item in wishlist</h4>
                                                 }
 
-
                                             </div>
                                         </section>
                                     </div>
