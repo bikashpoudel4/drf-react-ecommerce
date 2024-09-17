@@ -3,7 +3,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 import Login from "./views/auth/Login";
 import Register from "./views/auth/Register";
-import Dashboard from "./views/auth/Dashboard";
+// import Dashboard from "./views/auth/Dashboard";
 import Logout from "./views/auth/Logout";
 import ForgotPassword from "./views/auth/ForgotPassword";
 import CreatePassword from "./views/auth/CreatePassword";
@@ -28,6 +28,7 @@ import Wishlist from "./views/customer/Wishlist";
 import CustomerNotification from "./views/customer/CustomerNotification";
 import CustomerSettings from "./views/customer/Settings";
 import Invoice from "./views/customer/Invoice";
+import Dashboard from './views/vendor/Dashboard'
 
 
 function App() {
@@ -56,7 +57,7 @@ function App() {
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/create-new-password" element={<CreatePassword />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    {/* <Route path="/dashboard" element={<Dashboard />} /> */}
 
                     {/* STORE COMPONENTS */}
                     <Route path='/' element={<Products />} />
@@ -74,6 +75,10 @@ function App() {
                     <Route path="/customer/notifications/" element={<PrivateRoute><CustomerNotification /></PrivateRoute>} />
                     <Route path="/customer/settings/" element={<PrivateRoute><CustomerSettings /></PrivateRoute>} />
                     <Route path="/customer/invoice/:order_oid/" element={<PrivateRoute><Invoice /></PrivateRoute>} />
+
+                    {/* Vendor Routes */}
+                    <Route path="/vendor/dashboard/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+
                 </Routes>
             </MainWrapper>
             <StoreFooter/>
