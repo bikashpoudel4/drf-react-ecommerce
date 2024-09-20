@@ -56,5 +56,7 @@ urlpatterns = [
     path('customer/notification/<user_id>/<noti_id>/', customer_views.MarkCustomerNotificationAsSeen.as_view()),
 
     # Vendor Dashboard
-    path('vendor/stats/<vendor_id>/', vendor_views.DashboardStatsAPIView.as_view())
+    path('vendor/stats/<vendor_id>/', vendor_views.DashboardStatsAPIView.as_view()),
+    path('vendor-orders-report-chart/<vendor_id>/', vendor_views.MonthlyOrderChartAPIView),
+    path('vendor-product-report-chart/<vendor_id>/', vendor_views.MonthlyProductChartAPIView),
 ]

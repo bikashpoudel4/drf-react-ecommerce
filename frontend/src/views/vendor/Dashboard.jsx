@@ -1,7 +1,71 @@
 import React from 'react'
 import Sidebar from './Sidebar'
+import { useEffect, useState } from 'react'
+import apiInstance from '../../utils/axios'
+import UserData from '../plugin/UserData'
+import { Chart } from 'chart.js/auto'
+import {Line, Bar} from 'react-chartjs-2'
 
 function Dashboard() {
+    const [stats, setStats] = useState({})
+    const [orderChartData, setOrderChartData] = useState([])
+    const [productsChartData, setProductsChartData] = useState([])
+
+    useEffect (() => {
+        apiInstance.get(`vendor/stats/${UserData()?.vendor_id}/`).then((res) => {
+            setStats(res.data[0]);
+            
+        })
+    }, [])
+
+    
+
+    useEffect (() => {    
+        const fetchChartData = async () => {
+            const order_response = await apiInstance.get(`vendor-orders-report-chart/${UserData()?.vendor_id}/`)
+            setOrderChartData(order_response.data);
+    
+            const product_response = await apiInstance.get(`vendor-product-report-chart/${UserData()?.vendor_id}/`)
+            setProductsChartData(product_response.data);
+        }    
+        fetchChartData()    
+        console.log(orderChartData);
+        console.log(productsChartData);            
+    }, [])
+
+    const order_months = orderChartData?.map(item => item.month)
+    const order_counts = orderChartData?.map(item => item.orders)
+
+    const product_months = productsChartData?.map(item => item.month)
+    const product_counts = productsChartData?.map(item => item.products)
+
+    const order_data = {
+        labels: order_months,
+        datasets: [
+            {
+            label: "Total Orders",
+            data: order_counts,
+            fill: true,
+            backgroundColor: 'green',
+            borderColor: 'green'
+            }
+        ]
+    }
+
+    const product_data = {
+        labels: product_months,
+        datasets: [
+            {
+            label: "Total Products",
+            data: product_counts,
+            fill: true,
+            backgroundColor: 'blue',
+            borderColor: 'blue'
+            }
+        ]
+    }
+    
+
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
@@ -17,7 +81,7 @@ function Dashboard() {
                                         <i className="bi bi-grid fa-5x" />
                                     </div>
                                     <h6 className="text-uppercase">Products</h6>
-                                    <h1 className="display-1">134</h1>
+                                    <h1 className="display-1">{stats?.products}</h1>
                                 </div>
                             </div>
                         </div>
@@ -28,7 +92,7 @@ function Dashboard() {
                                         <i className="bi bi-cart-check fa-5x" />
                                     </div>
                                     <h6 className="text-uppercase">Orders</h6>
-                                    <h1 className="display-1">87</h1>
+                                    <h1 className="display-1">{stats?.orders}</h1>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +114,7 @@ function Dashboard() {
                                         <i className="bi bi-currency-dollar fa-5x" />
                                     </div>
                                     <h6 className="text-uppercase">Revenue</h6>
-                                    <h1 className="display-1">$36</h1>
+                                    <h1 className="display-1">${stats?.revenue}</h1>
                                 </div>
                             </div>
                         </div>
@@ -64,20 +128,27 @@ function Dashboard() {
                             </div>
                         </div>
                         <div className="row my-2">
-                            <div className="col-md-12 py-1">
+
+                            <div className="col-lg-6 py-1">
                                 <div className="card">
                                     <div className="card-body">
-                                        <canvas id="line-chart" />
+                                        {/* <canvas id="line-chart" /> */}
+                                        {/* <Line data={order_data} /> */}
+                                        <Bar data={order_data} style={{height:300}} />
                                     </div>
                                 </div>
-                            </div>
-                            {/* <div class="col-md-6 py-1">
-                <div class="card">
-                    <div class="card-body">
-                        <canvas id="pie-chart"></canvas>
-                    </div>
-                </div>
-            </div> */}
+                            </div>   
+
+                            <div className="col-lg-6 py-1">
+                                <div className="card">
+                                    <div className="card-body">
+                                        {/* <canvas id="line-chart" /> */}
+                                        {/* <Line data={order_data} /> */}
+                                        <Bar data={product_data} style={{height:300}} />
+                                    </div>
+                                </div>
+                            </div>   
+
                         </div>
                     </div>
                     <a id="layouts" />
