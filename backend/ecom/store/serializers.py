@@ -306,3 +306,15 @@ class SummarySerializer(serializers.Serializer):
 class EarningSerializer(serializers.Serializer):
     monthly_revenue = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_revenue = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+
+class CouponSummarySerializer(serializers.Serializer):
+    total_coupons = serializers.IntegerField()
+    active_coupons = serializers.IntegerField()
+
+
+class NotificationSummarySerializer(serializers.Serializer):
+    un_read_noti = serializers.IntegerField()
+    read_noti = serializers.IntegerField()
+    all_noti = serializers.IntegerField()
+

@@ -26,6 +26,8 @@ from store.serializers import (
     WishlistSerializer,
     SummarySerializer,
     EarningSerializer,
+    CouponSummarySerializer,
+    NotificationSummarySerializer,
 )
 from store.models import (
     Product,
@@ -77,18 +79,22 @@ class DashboardStatsAPIView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+
 @api_view(('GET',))
 def MonthlyOrderChartAPIView(request, vendor_id):
     vendor = Vendor.objects.get(id=vendor_id)
     orders = CartOrder.objects.filter(vendor=vendor, payment_status="paid")
-    orders_by_month = orders.annotate(month=ExtractMonth("date")).values("month").annotate(orders=models.Count("id")).order_by("month")
+    orders_by_month = orders.annotate(month=ExtractMonth("date")).values(
+        "month").annotate(orders=models.Count("id")).order_by("month")
     return Response(orders_by_month)
+
 
 @api_view(('GET',))
 def MonthlyProductChartAPIView(request, vendor_id):
     vendor = Vendor.objects.get(id=vendor_id)
     products = Product.objects.filter(vendor=vendor)
-    products_by_month = products.annotate(month=ExtractMonth("date")).values("month").annotate(products=models.Count("id")).order_by("month")
+    products_by_month = products.annotate(month=ExtractMonth("date")).values(
+        "month").annotate(products=models.Count("id")).order_by("month")
     return Response(products_by_month)
 
 
@@ -100,7 +106,8 @@ class ProductAPIView(generics.ListAPIView):
         vendor_id = self.kwargs['vendor_id']
         vendor = Vendor.objects.get(id=vendor_id)
         return Product.objects.filter(vendor=vendor).order_by('-id')
-    
+
+
 class OrderAPIView(generics.ListAPIView):
     serializer_class = CartOrderSerializer
     permission_classes = [AllowAny]
@@ -110,7 +117,7 @@ class OrderAPIView(generics.ListAPIView):
         vendor = Vendor.objects.get(id=vendor_id)
 
         return CartOrder.objects.filter(vendor=vendor, paymen_status="paid").order_by('-id')
-    
+
 
 class OrderDetailAPIView(generics.RetrieveAPIView):
     serializer_class = CartOrderSerializer
@@ -147,9 +154,11 @@ class FilterProductAPIView(generics.ListAPIView):
         filter = self.request.GET.get("filter")
 
         if filter == "published":
-            products = Product.objects.filter(vendor=vendor, status="published")
+            products = Product.objects.filter(
+                vendor=vendor, status="published")
         elif filter == "in_review":
-            products = Product.objects.filter(vendor=vendor, status="in_review")
+            products = Product.objects.filter(
+                vendor=vendor, status="in_review")
         elif filter == "draft":
             products = Product.objects.filter(vendor=vendor, status="draft")
         elif filter == "disabled":
@@ -158,6 +167,7 @@ class FilterProductAPIView(generics.ListAPIView):
             products = Product.objects.filter(vendor=vendor)
 
         return products
+
 
 class EarningAPIView(generics.ListAPIView):
     serializer_class = EarningSerializer
@@ -172,17 +182,18 @@ class EarningAPIView(generics.ListAPIView):
             total_revenue=models.Sum(models.F('sub_total') + models.F('shipping_amount')))['total_revenue'] or 0
         total_revenue = CartOrderItem.objects.filter(vendor=vendor, order__payment_status="paid").aggregate(
             total_revenue=models.Sum(models.F('sub_total') + models.F('shipping_amount')))['total_revenue'] or 0
-        
+
         return [{
             'monthly_revenue': monthly_revenue,
             'total_revenue': total_revenue,
         }]
-    
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-    
+
+
 @api_view(('GET', ))
 def MonthlyEarningTracker(request, vendor_id):
     vendor = Vendor.objects.get(id=vendor_id)
@@ -194,8 +205,8 @@ def MonthlyEarningTracker(request, vendor_id):
         .annotate(
             sales_count=models.Sum("qty"),
             total_earning=models.Sum(
-                models.F('sub_total')+ models.F('shipping_amount')
-                )
+                models.F('sub_total') + models.F('shipping_amount')
+            )
         ).order_by('-month')
     )
     return Response(monthly_earning_tracker)
@@ -209,7 +220,7 @@ class ReviewListAPIView(generics.ListAPIView):
         vendor_id = self.kwargs['vendor_id']
         vendor = Vendor.objects.get(id=vendor_id)
         return Review.objects.filter(product__vendor=vendor)
-    
+
 
 class ReviewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
@@ -222,3 +233,127 @@ class ReviewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         vendor = Vendor.objects.get(id=vendor_id)
         review = Review.objects.get(id=review_id, product__vendor=vendor)
         return review
+
+
+class CouponListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = CouponSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+        return Coupon.objects.filter(vendor=vendor)
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        vendor_id = payload['vendor_id']
+        code = payload['code']
+        discount = payload['discount']
+        active = payload['active']
+
+        vendor = Vendor.objects.get(id=vendor_id)
+        Coupon.objects.create(
+            vendor=vendor,
+            code=code,
+            discount=discount,
+            active=(active.lower() == "true")
+        )
+        return Response({"message": "Coupon created successfully"}, status=status.HTTP_201_CREATED)
+
+
+class CouponDetailAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = CouponSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        vendor_id = self.kwargs['vendor_id']
+        coupon_id = self.kwargs['coupon_id']
+
+        vendor = Vendor.objects.get(id=vendor_id)
+        return Coupon.objects.get(vendor=vendor, id=coupon_id)
+
+
+class CouponStatsAPIView(generics.ListAPIView):
+    serializer_class = CouponSummarySerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+
+        total_coupons = Coupon.objects.filter(vendor=vendor).count()
+        active_coupons = Coupon.objects.filter(
+            vendor=vendor, active=True).count()
+
+        return [{
+            'total_coupons': total_coupons,
+            'active_coupons': active_coupons,
+        }]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class NotificationUnseenAPIView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+        return Notification.objects.filter(vendor=vendor, seen=False).order_by('-id')
+
+
+class NotificationSeenAPIView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+        return Notification.objects.filter(vendor=vendor, seen=True).order_by('-id')
+
+
+class NotficationSummaryAPIView(generics.ListAPIView):
+    serializer_class = NotificationSummarySerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+
+        un_read_noti = Notification.objects.filter(
+            vendor=vendor, seen=False).count()
+        read_noti = Notification.objects.filter(
+            vendor=vendor, seen=True).count()
+        all_noti = Notification.objects.filter(vendor=vendor).count()
+
+        return [{
+            "un_read_noti": un_read_noti,
+            "read_noti": read_noti,
+            "all_noti": all_noti,
+        }]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+class NotificationVendorMarkAsSeen(generics.RetrieveAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        vendor_id = self.kwargs['vendor_id']
+        noti_id = self.kwargs['noti_id']
+
+        vendor = Vendor.objects.get(id=vendor_id)
+        noti = Notification.objects.get(vendor=vendor, id=noti_id)
+
+        noti.seen == True
+        noti.save()
+
+        return noti
