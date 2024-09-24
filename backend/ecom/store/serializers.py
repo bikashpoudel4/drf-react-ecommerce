@@ -132,6 +132,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "size",
             "product_rating",  # from def product_rating
             "rating_count",  # from def rating_count
+            "order",
             "pid",
             "slug",
             "date",

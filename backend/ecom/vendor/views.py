@@ -13,7 +13,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from vendor.models import Vendor
-from userauths.models import User
+from userauths.models import (User, Profile)
+from userauths.serializers import ProfileSerializer
 from store.serializers import (
     ProductSerializer,
     CategorySerializer,
@@ -23,6 +24,7 @@ from store.serializers import (
     CouponSerializer,
     NotificationSerializer,
     ReviewSerializer,
+    VendorSerializer,
     WishlistSerializer,
     SummarySerializer,
     EarningSerializer,
@@ -357,3 +359,33 @@ class NotificationVendorMarkAsSeen(generics.RetrieveAPIView):
         noti.save()
 
         return noti
+    
+
+class VendorProfileUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [AllowAny]
+    
+
+class ShopUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = VendorSerializer
+    permission_classes = [AllowAny]
+
+
+class ShopAPIView(generics.RetrieveAPIView):
+    serializer_class = VendorSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        vendor_slug = self.kwargs['vendor_slug']
+        return Vendor.objects.get(slug=vendor_slug)
+
+class ShopProductAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        vendor_slug = self.kwargs['vendor_slug']
+        vendor = Vendor.objects.get(slug=vendor_slug)
+        return Product.objects.filter(vendor=vendor)
