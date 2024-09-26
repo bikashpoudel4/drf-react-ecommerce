@@ -118,8 +118,8 @@ function Earning() {
                                     <div className="card">
                                         <div className="card-body">
                                             {/* <canvas id="line-chart" /> */}
-                                            <Bar data={revenue_data} style={{height:300}} />
-                                            {/* <Line data={revenue} style={{height:300}} /> */}
+                                            {/* <Bar data={revenue_data} style={{height:300}} /> */}
+                                            <Line data={revenue_data} options={{ maintainAspectRatio: false }} style={{height:300}} />
                                         </div>
                                     </div>
                                 </div>

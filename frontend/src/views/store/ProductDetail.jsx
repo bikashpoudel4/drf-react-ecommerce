@@ -334,7 +334,7 @@ function ProductDetail() {
                             aria-labelledby="pills-home-tab"
                             tabIndex={0}
                         >
-                            <div className="table-responsive">
+                            {/* <div className="table-responsive">
                                 <table className="table table-sm table-borderless mb-0">
                                     <tbody>
                                         <tr>
@@ -388,7 +388,7 @@ function ProductDetail() {
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
+                            </div> */}
                         </div>
                         <div
                             className="tab-pane fade"
@@ -397,7 +397,7 @@ function ProductDetail() {
                             aria-labelledby="pills-profile-tab"
                             tabIndex={0}
                         >
-                            <div className="card mb-3" style={{ maxWidth: 400 }}>
+                            {/* <div className="card mb-3" style={{ maxWidth: 400 }}>
                                 <div className="row g-0">
                                     <div className="col-md-4">
                                         <img
@@ -418,7 +418,7 @@ function ProductDetail() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         <div
                             className="tab-pane fade"
@@ -455,7 +455,7 @@ function ProductDetail() {
                                                     id="reviewText"
                                                     rows={4}
                                                     name="review"
-                                                    placeholder="Write your review"
+                                                    placeholder="Write your review..."
                                                     value={createReview.review}
                                                     onChange={handleReviewChange}
                                                 />
