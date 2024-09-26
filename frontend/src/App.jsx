@@ -32,6 +32,7 @@ import Dashboard from './views/vendor/Dashboard';
 import Product from './views/vendor/Product';
 import VendorOrders from './views/vendor/Orders';
 import VendorOrderDetail from './views/vendor/OrderDetail'
+import Earning from "./views/vendor/Earning";
 
 
 function App() {
@@ -52,42 +53,43 @@ function App() {
         <CartContext.Provider value={[cartCount, setCartCount]}>
 
             <BrowserRouter>
-            <StoreHeader/> 
-            <MainWrapper>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/logout" element={<Logout />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/create-new-password" element={<CreatePassword />} />
-                    {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+                <StoreHeader />
+                <MainWrapper>
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/logout" element={<Logout />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/create-new-password" element={<CreatePassword />} />
+                        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
 
-                    {/* STORE COMPONENTS */}
-                    <Route path='/' element={<Products />} />
-                    <Route path='/detail/:slug/' element={<ProductDetail />} />
-                    <Route path='/cart/' element={<Cart />} />
-                    <Route path='/checkout/:order_oid/' element={<Checkout />} />
-                    <Route path='/payment-success/:order_oid/' element={<PaymentSuccess />} />
-                    <Route path='/search' element={<Search />} />
+                        {/* STORE COMPONENTS */}
+                        <Route path='/' element={<Products />} />
+                        <Route path='/detail/:slug/' element={<ProductDetail />} />
+                        <Route path='/cart/' element={<Cart />} />
+                        <Route path='/checkout/:order_oid/' element={<Checkout />} />
+                        <Route path='/payment-success/:order_oid/' element={<PaymentSuccess />} />
+                        <Route path='/search' element={<Search />} />
 
-                    {/* Customer Routes */}
-                    <Route path="/customer/account/" element={<PrivateRoute><Account /></PrivateRoute>} />
-                    <Route path="/customer/orders/" element={<PrivateRoute><Orders /></PrivateRoute>} />
-                    <Route path="/customer/order/detail/:order_oid/" element={<PrivateRoute><OrderDetail /></PrivateRoute>} />
-                    <Route path="/customer/wishlist/" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
-                    <Route path="/customer/notifications/" element={<PrivateRoute><CustomerNotification /></PrivateRoute>} />
-                    <Route path="/customer/settings/" element={<PrivateRoute><CustomerSettings /></PrivateRoute>} />
-                    <Route path="/customer/invoice/:order_oid/" element={<PrivateRoute><Invoice /></PrivateRoute>} />
+                        {/* Customer Routes */}
+                        <Route path="/customer/account/" element={<PrivateRoute><Account /></PrivateRoute>} />
+                        <Route path="/customer/orders/" element={<PrivateRoute><Orders /></PrivateRoute>} />
+                        <Route path="/customer/order/detail/:order_oid/" element={<PrivateRoute><OrderDetail /></PrivateRoute>} />
+                        <Route path="/customer/wishlist/" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
+                        <Route path="/customer/notifications/" element={<PrivateRoute><CustomerNotification /></PrivateRoute>} />
+                        <Route path="/customer/settings/" element={<PrivateRoute><CustomerSettings /></PrivateRoute>} />
+                        <Route path="/customer/invoice/:order_oid/" element={<PrivateRoute><Invoice /></PrivateRoute>} />
 
-                    {/* Vendor Routes */}
-                    <Route path="/vendor/dashboard/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                    <Route path="/vendor/products/" element={<PrivateRoute><Product /></PrivateRoute>} />
-                    <Route path="/vendor/orders/" element={<PrivateRoute><VendorOrders /></PrivateRoute>} />
-                    <Route path="/vendor/orders/:order_oid/" element={<PrivateRoute><VendorOrderDetail /></PrivateRoute>} />
+                        {/* Vendor Routes */}
+                        <Route path="/vendor/dashboard/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+                        <Route path="/vendor/products/" element={<PrivateRoute><Product /></PrivateRoute>} />
+                        <Route path="/vendor/orders/" element={<PrivateRoute><VendorOrders /></PrivateRoute>} />
+                        <Route path="/vendor/orders/:order_oid/" element={<PrivateRoute><VendorOrderDetail /></PrivateRoute>} />
+                        <Route path="/vendor/earning/" element={<PrivateRoute><Earning /></PrivateRoute>} />
 
-                </Routes>
-            </MainWrapper>
-            <StoreFooter/>
+                    </Routes>
+                </MainWrapper>
+                <StoreFooter />
             </BrowserRouter>
 
         </CartContext.Provider>
