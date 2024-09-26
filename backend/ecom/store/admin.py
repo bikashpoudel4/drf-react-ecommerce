@@ -61,7 +61,6 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [GallaryInline, SpecificationInline, SizeInline, ColorInline]
 
 
-
 class CartAdmin(admin.ModelAdmin):
     list_display = [
         "product",
@@ -79,11 +78,19 @@ class CartAdmin(admin.ModelAdmin):
         "date",
     ]
 
+
 class CartOrderAdmin(admin.ModelAdmin):
     list_display = [
         "oid",
         "buyer",
         "payment_status",
+        "order_status",
+        "total",
+        "date",
+    ]
+    list_editable = [
+        "payment_status",
+        "order_status",
         "total",
     ]
 

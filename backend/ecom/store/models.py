@@ -170,9 +170,9 @@ class CartOrder(models.Model):
     )
 
     ORDER_STATUS = (
-        ("pending", "Pending"),
-        ("fulfilled", "Fulfilled"),
-        ("canclled", "Canclled"),
+        ("Pending", "Pending"),
+        ("Fulfilled", "Fulfilled"),
+        ("Canclled", "Canclled"),
     )
 
     vendor = models.ManyToManyField(Vendor, blank=True)
