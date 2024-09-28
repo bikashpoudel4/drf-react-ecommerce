@@ -134,12 +134,9 @@ function Coupon() {
                                                 }
                                             </td>
                                             <td>
-                                                <a href="#" className="btn btn-secondary mb-1 ms-2">
-                                                    <i className="fas fa-eye"></i>
-                                                </a>
-                                                <a href="#" className="btn btn-primary mb-1 ms-2">
+                                                <Link to={`/vendor/coupon/${c.id}/`} className="btn btn-primary mb-1 ms-2">
                                                     <i className="fas fa-edit"></i>
-                                                </a>
+                                                </Link>
                                                 <a onClick={() => handleDeleteCoupon(c.id)} href="#" className="btn btn-danger mb-1 ms-2">
                                                     <i className="fas fa-trash"></i>
                                                 </a>
