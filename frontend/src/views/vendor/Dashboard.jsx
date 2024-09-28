@@ -207,7 +207,7 @@ function Dashboard() {
                                         </tbody>
                                     </table>
                                 </div>
-                                <div role="tabpanel" className="tab-pane" id="profile1">
+                                {/* <div role="tabpanel" className="tab-pane" id="profile1">
                                     <h4>Orders</h4>
                                     <table className="table">
                                         <thead className="table-dark">
@@ -233,33 +233,9 @@ function Dashboard() {
                                                     </a>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <th scope="row">#hjkjhkhk</th>
-                                                <td>$210.90</td>
-                                                <td>Pending</td>
-                                                <td>Not Shipped</td>
-                                                <td>21th June, 2023</td>
-                                                <td>
-                                                    <a href="" className="btn btn-primary mb-1">
-                                                        <i className="fas fa-eye" />
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">#retrey</th>
-                                                <td>$260.90</td>
-                                                <td>Failed</td>
-                                                <td>Not Shipped</td>
-                                                <td>25th June, 2023</td>
-                                                <td>
-                                                    <a href="" className="btn btn-primary mb-1">
-                                                        <i className="fas fa-eye" />
-                                                    </a>
-                                                </td>
-                                            </tr>
                                         </tbody>
                                     </table>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
