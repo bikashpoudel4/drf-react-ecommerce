@@ -11,6 +11,11 @@ import Swal from 'sweetalert2'
 function Coupon() {
     const [stats, setStats] = useState([])
     const [coupons, setCoupons] = useState([])
+    const [createCoupon, setCreateCoupon] = useState({
+        code: "",
+        discount: "",
+        active: true
+    })
 
     const fetchCouponData = async () => {
         await apiInstance.get(`vendor-coupon-stats/${UserData()?.vendor_id}/`).then((res) => {
@@ -33,6 +38,36 @@ function Coupon() {
         Swal.fire({
             icon: 'success',
             title: 'Coupon Deleted',
+        })
+    }
+
+    const handleCouponChange = (event) => {
+        setCreateCoupon({
+            ...createCoupon,
+            [event.target.name]: event.target.type === 'checkbox' ? event.target.checked : event.target.value
+        })
+        console.log(createCoupon.code);
+        console.log(createCoupon.discount);
+        console.log(createCoupon.active);      
+    }
+
+    const handleCreateCoupon = async (e) => {
+        e.preventDefault()
+
+        const formdata = new FormData()
+        
+        formdata.append('vendor_id', UserData()?.vendor_id)
+        formdata.append('code', createCoupon.code)
+        formdata.append('discount', createCoupon.discount)
+        formdata.append('active', createCoupon.active)
+
+        await apiInstance.post(`vendor-coupon-list/${UserData()?.vendor_id}/`, formdata).then((res) => {
+            console.log(res.data);            
+        })
+        fetchCouponData()
+        Swal.fire({
+            icon: 'success',
+            title: 'Coupon Created',
         })
     }
 
@@ -115,6 +150,47 @@ function Coupon() {
                                     {coupons.length < 1 &&
                                         <h5 className='mt-3 p-3'>No coupons yet</h5>
                                     }
+
+                                    {/* Modal */}
+                                    {/* https://getbootstrap.com/docs/5.1/components/modal/ */}
+                                    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <i className='fas fa-plus'></i> Create Coupon
+                                    </button>
+
+                                    {/* Modal */}
+                                    <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div className="modal-dialog">
+                                            <div className="modal-content">
+                                                <div className="modal-header">
+                                                    <h5 className="modal-title" id="exampleModalLabel">Create Coupon</h5>
+                                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div className="modal-body">
+
+                                                    <form onSubmit={handleCreateCoupon}>
+                                                        
+                                                        <div className="mb-3">
+                                                            <label htmlFor="code" className="form-label">Code</label>
+                                                            <input type="text" className="form-control" id="code" name='code' value={createCoupon.code} onChange={handleCouponChange} placeholder='Enter coupon code' aria-describedby="emailHelp" />
+                                                        </div>
+
+                                                        <div className="mb-3">
+                                                            <label htmlFor="discount" className="form-label">Discount</label>
+                                                            <input type="text" className="form-control" id="discount" name='discount' value={createCoupon.discount} onChange={handleCouponChange} placeholder='Enter coupon discount' aria-describedby="emailHelp" />
+                                                        </div>
+
+                                                        <div className="mb-3 form-check">
+                                                            <input checked={createCoupon.active} onChange={handleCouponChange} name='active' type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                                                <label className="form-check-label" htmlFor="exampleCheck1">Active</label>
+                                                        </div>
+
+                                                        <button type="submit" className="btn btn-primary">Create Coupon</button>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 </tbody>
                             </table>
