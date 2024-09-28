@@ -5,6 +5,7 @@ import apiInstance from '../../utils/axios'
 import UserData from '../plugin/UserData'
 import { Link, useParams } from 'react-router-dom'
 import moment from 'moment'
+import Swal from 'sweetalert2'
 
 
 function Coupon() {
@@ -25,6 +26,15 @@ function Coupon() {
         fetchCouponData()
 
     }, [])
+
+    const handleDeleteCoupon = async (couponId) => {
+        await apiInstance.delete(`vendor-coupon-detail/${UserData().vendor_id}/${couponId}/`)
+        fetchCouponData()
+        Swal.fire({
+            icon: 'success',
+            title: 'Coupon Deleted',
+        })
+    }
 
     return (
         <div className="container-fluid" id="main">
@@ -89,18 +99,22 @@ function Coupon() {
                                                 }
                                             </td>
                                             <td>
-                                                <a href="" className="btn btn-secondary mb-1 ms-2">
+                                                <a href="#" className="btn btn-secondary mb-1 ms-2">
                                                     <i className="fas fa-eye"></i>
                                                 </a>
-                                                <a href="" className="btn btn-primary mb-1 ms-2">
+                                                <a href="#" className="btn btn-primary mb-1 ms-2">
                                                     <i className="fas fa-edit"></i>
                                                 </a>
-                                                <a href="" className="btn btn-danger mb-1 ms-2">
+                                                <a onClick={() => handleDeleteCoupon(c.id)} href="#" className="btn btn-danger mb-1 ms-2">
                                                     <i className="fas fa-trash"></i>
                                                 </a>
                                             </td>
                                         </tr>
                                     ))}
+
+                                    {coupons.length < 1 &&
+                                        <h5 className='mt-3 p-3'>No coupons yet</h5>
+                                    }
 
                                 </tbody>
                             </table>
