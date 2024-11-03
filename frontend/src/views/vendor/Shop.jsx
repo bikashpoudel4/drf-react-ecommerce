@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-
-import apiInstance from "../../utils/axios";
-import GetCurrentAddress from "../plugin/UserCountry";
-import UserData from "../plugin/UserData";
-import CartID from "../plugin/CartID"
+import React from 'react'
+import Sidebar from './Sidebar'
+import { useEffect, useState, useContext } from 'react'
+import apiInstance from '../../utils/axios'
+import UserData from '../plugin/UserData'
+import { Link, useParams } from 'react-router-dom'
+import moment from 'moment'
 import Swal from 'sweetalert2'
 import { CartContext } from "../plugin/Context";
+import CartID from '../plugin/CartID'
+import GetCurrentAddress from '../plugin/UserCountry'
+
 
 const Toast = Swal.mixin({
     toast: true,
@@ -16,9 +19,10 @@ const Toast = Swal.mixin({
     timerProgressBar: true
 })
 
-function Products() {
-    const [products, setProducts] = useState([]);
-    const [category, setCategory] = useState([]);
+
+function Shop() {
+    const [vendor, setVendor] = useState([])
+    const [products, setProducts] = useState([])
 
     const [colorValue, setColorValue] = useState("No Color")
     const [sizeValue, setSizeValue] = useState("No Size")
@@ -33,6 +37,22 @@ function Products() {
     const currentAddress = GetCurrentAddress()
     const userData = UserData()
     const cart_id = CartID()
+
+    const param = useParams()
+
+    useEffect(() => {
+        apiInstance.get(`shop/${param.slug}/`).then((res) => {
+            setVendor(res.data);
+            
+        })
+    }, [])
+
+    useEffect(() => {
+        apiInstance.get(`vendor-products/${param.slug}/`).then((res) => {
+            setProducts(res.data);
+        })
+    }, [])
+
 
     const handleColorButtonClick = (event, product_id, colorName) => {
         setColorValue(colorName)
@@ -107,26 +127,23 @@ function Products() {
         }
     }
 
-
-    useEffect(() => {
-        apiInstance.get(`products/`).then((response) => {
-            setProducts(response.data);
-        });
-    }, []);
-
-    useEffect(() => {
-        apiInstance.get(`category/`).then((response) => {
-            setCategory(response.data);
-        });
-    }, []);
-
     return (
-        <>
-            <main className="mt-5">
-                <div className="container">
-                    <section className="text-center">
-                        <div className="row">
-                            {products?.map((p, index) => (
+        <main className="mt-5">
+            <div className="container">
+                <section className="text-center container">
+                    <div className="row py-lg-5">
+                        <div className="col-lg-6 col-md-8 mx-auto">
+                            <img src={vendor.image} style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" }} alt="" />
+                            <h1 className="fw-light">{vendor.name}</h1>
+                            <p className="lead text-muted">{vendor.description}</p>
+                        </div>
+                    </div>
+                </section>
+                <section className="text-center">
+                    <h4 className="mb-4">{products.length} Products </h4>
+                    <div className="row">
+                        {/* Run the .map() function here */}
+                        {products?.map((p, index) => (
                                 <div className="col-lg-4 col-md-12 mb-4" key={index}>
                                     <div className="card">
                                         <div
@@ -242,24 +259,12 @@ function Products() {
                                     </div>
                                 </div>
                             ))}
-
-                            <div className='row'>
-                                {category?.map((c, index) => (
-                                    <div className="col-lg-2" key={index}>
-                                        {/* <div className="col-lg-2"> */}
-                                        <img src={c.image} style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} alt="" />
-                                        <h6>{c.title}</h6>
-                                    </div>
-                                ))}
-                            </div>
-
-                        </div>
-                    </section>
-                    {/*Section: Wishlist*/}
-                </div>
-            </main>
-        </>
-    );
+                        {/* .map() function end here */}
+                    </div>
+                </section>
+            </div>
+        </main>
+    )
 }
 
-export default Products;
+export default Shop

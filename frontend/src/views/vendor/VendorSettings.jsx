@@ -418,9 +418,9 @@ function VendorSettings() {
                                                                 <button className="btn btn-success me-3" type="submit">
                                                                     Update Shop <i className="fas fa-check-circle" />{" "}
                                                                 </button>
-                                                                <button className="btn btn-primary" type="submit">
+                                                                <Link to={`/vendor/${vendorData.slug}/`} className="btn btn-primary" type="submit">
                                                                     View Shop <i className="fas fa-shop" />{" "}
-                                                                </button>
+                                                                </Link>
                                                             </div>
                                                         </div>
                                                     </form>
