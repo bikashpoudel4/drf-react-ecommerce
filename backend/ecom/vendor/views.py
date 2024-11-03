@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from vendor.models import Vendor
 from userauths.models import (User, Profile)
@@ -414,9 +415,10 @@ class VendorProfileUpdateView(generics.RetrieveUpdateAPIView):
     
 
 class ShopUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = Profile.objects.all()
+    queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
     permission_classes = [AllowAny]
+    # parser_classes = (MultiPartParser, FormParser)
 
 
 class ShopAPIView(generics.RetrieveAPIView):

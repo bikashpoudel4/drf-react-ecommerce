@@ -10,6 +10,8 @@ import Swal from 'sweetalert2'
 function VendorSettings() {
     const [profileData, setProfileData] = useState([])
     const [profileImage, setProfileImage] = useState('')
+    const [vendorData, setVendorData] = useState([])
+    const [vendorImage, setVendorImage] = useState('')
 
     const fetchProfileData = () => {
         apiInstance.get(`vendor-settings/${UserData()?.user_id}/`).then((res) => {
@@ -18,9 +20,36 @@ function VendorSettings() {
         })
     }
 
+    const fetchVendorData = () => {
+        try {
+          apiInstance.get(`vendor-shop-settings/${UserData()?.vendor_id}/`).then((res) => {
+        //   apiInstance.get(`vendor-shop-settings/${UserData()?.user_id}/`).then((res) => {
+            setVendorData(res.data)
+            setVendorImage(res.data.image);
+            // console.log("res.data.image:", res.data.image);
+          })
+        } catch (error) {
+          console.error('Error fetching profile data:', error);
+        }
+      };
+
+    // const fetchVendorData = async () => {
+    //     try {
+    //         const res = await apiInstance.get(`vendor-shop-settings/${UserData()?.vendor_id}/`);
+    //         setVendorData(res.data);
+    //         setVendorImage(res.data.image); // Update image state if needed
+    //         console.log('Vendor Image:', res.data.image);
+    //     } catch (error) {
+    //         console.error('Error fetching vendor data:', error);
+    //     }
+    // };
+
     useEffect(() => {
-        fetchProfileData()
+        fetchProfileData();
+        fetchVendorData();
     }, [])
+
+    console.log(vendorData);
 
 
     const handleInputChange = (event) => {
@@ -37,19 +66,30 @@ function VendorSettings() {
         })
     }
 
-    const handleProfileSubmit = async (e) => {
-        e.preventDefault()        
-        const formdata = new FormData()
+    const handleVendorChange = (event) => {
+        setVendorData({
+            ...vendorData,
+            [event.target.name]: event.target.value            
+        })
+    }
 
+    const handleVendorFileChange = (event) => {
+        setVendorData({
+            ...vendorData,
+            [event.target.name]: event.target.files[0]
+        })
+    }
+
+    const handleProfileSubmit = async (e) => {
+        e.preventDefault()
+        const formdata = new FormData()
         const res = await apiInstance.get(`vendor-settings/${UserData()?.user_id}/`)
         if (profileData.image && profileData.image !== res.data.image) {
             formdata.append("image", profileData.image)
         }
-
         formdata.append("full_name", profileData.full_name)
         formdata.append("about", profileData.about)
         formdata.append("phone", profileData?.user?.phone);
-
         await apiInstance.patch(`vendor-settings/${UserData()?.user_id}/`, formdata, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -61,6 +101,76 @@ function VendorSettings() {
             title: 'Profile Updated Successfully',
         })
     }
+
+
+    const handleVendorSubmit = async (e) => {
+        e.preventDefault()
+        const formdata = new FormData()
+        const res = await apiInstance.get(`vendor-shop-settings/${UserData()?.vendor_id}/`)
+        if (vendorData.image && vendorData.image !== res.data.image) {
+            console.log("Appending image:", vendorData.image); 
+            formdata.append('image', vendorData.image);
+        }
+        formdata.append("name", vendorData.name)
+        formdata.append("email", vendorData.email)
+        formdata.append("mobile", vendorData?.mobile);
+        formdata.append("description", vendorData?.description);
+        await apiInstance.patch(`vendor-shop-settings/${UserData()?.vendor_id}/`, formdata, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        fetchVendorData()
+        Swal.fire({
+            icon: 'success',
+            title: 'Shop Updated Successfully',
+        })
+    }
+
+    // // MODIFIED
+    // const handleVendorSubmit = async (e) => {
+    //     e.preventDefault();
+    //     const formdata = new FormData();
+    //     const userId = UserData()?.vendor_id;
+        
+    //     if (!userId) {
+    //         console.error("User ID not found!");
+    //         return;
+    //     }
+        
+    //     try {
+    //         const res = await apiInstance.get(`vendor-shop-settings/${vendor_id}/`);
+            
+    //         if (vendorData.image && vendorData.image !== res.data.image) {
+    //             console.log("Appending image:", vendorData.image); 
+    //             formdata.append('image', vendorData.image);
+    //         }
+    //         formdata.append("name", vendorData.name);
+    //         formdata.append("email", vendorData.email);
+    //         formdata.append("mobile", vendorData?.mobile);
+    //         formdata.append("description", vendorData?.description);
+            
+    //         await apiInstance.patch(`vendor-shop-settings/${vendor_id}/`, formdata, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data'
+    //             }
+    //         });
+            
+    //         fetchVendorData();
+    //         Swal.fire({
+    //             icon: 'success',
+    //             title: 'Shop Updated Successfully',
+    //         });
+    //     } catch (error) {
+    //         console.error("Error in handleVendorSubmit:", error);
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Failed to Update Shop',
+    //             text: error.response ? error.response.data.detail : 'Unexpected error occurred',
+    //         });
+    //     }
+    // };
+    
 
     return (
         <div className="container-fluid" id="main">
@@ -213,15 +323,16 @@ function VendorSettings() {
                                                 <div className="card-body">
                                                     <div className="d-flex flex-column align-items-center text-center">
                                                         <img
-                                                            src="https://img.freepik.com/free-vector/cartoon-style-cafe-front-shop-view_134830-697.jpg"
+                                                            src={vendorImage}
+                                                            // src={vendorData.image}
                                                             style={{ width: 160, height: 160, objectFit: "cover" }}
                                                             alt="Admin"
                                                             className="rounded-circle"
                                                             width={150}
                                                         />
                                                         <div className="mt-3">
-                                                            <h4 className="text-dark">Desphixs</h4>
-                                                            <p className="text-secondary mb-1">We sell cloths here</p>
+                                                            <h4 className="text-dark">{vendorData.name}</h4>
+                                                            <p className="text-secondary mb-1">{vendorData.description}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -235,6 +346,7 @@ function VendorSettings() {
                                                         method="POST"
                                                         noValidate=""
                                                         encType="multipart/form-data"
+                                                        onSubmit={handleVendorSubmit}
                                                     >
                                                         <div className="row text-dark">
                                                             <div className="col-lg-12 mb-2">
@@ -244,45 +356,66 @@ function VendorSettings() {
                                                                 <input
                                                                     type="file"
                                                                     className="form-control"
-                                                                    name=""
+                                                                    name="image"
                                                                     id=""
+                                                                    onChange={handleVendorFileChange}
                                                                 />
                                                             </div>
                                                             <div className="col-lg-12 mb-2 ">
                                                                 <label htmlFor="" className="mb-2">
-                                                                    Full Name
+                                                                    Shop Name
                                                                 </label>
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    name=""
+                                                                    name="name"
                                                                     id=""
+                                                                    value={vendorData.name}
+                                                                    onChange={handleVendorChange}
                                                                 />
                                                             </div>
                                                             <div className="col-lg-6 mb-2">
                                                                 <label htmlFor="" className="mb-2">
-                                                                    Email
+                                                                    Shop Email
                                                                 </label>
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    name=""
+                                                                    name="email"
                                                                     id=""
+                                                                    value={vendorData.email}
+                                                                    onChange={handleVendorChange}
                                                                 />
                                                             </div>
                                                             <div className="col-lg-6 mb-2">
                                                                 <label htmlFor="" className="mb-2">
-                                                                    Phone Number
+                                                                    Shop Phone Number
                                                                 </label>
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    name=""
+                                                                    name="mobile"
                                                                     id=""
+                                                                    value={vendorData.mobile}
+                                                                    onChange={handleVendorChange}
                                                                 />
+                                                            </div>
+                                                            <div className="col-lg-12 mb-2">
+                                                                <label htmlFor="" className="mb-2">
+                                                                    Shop Description
+                                                                </label>
+                                                                <textarea
+                                                                    cols='30'
+                                                                    rows='10'
+                                                                    className="form-control"
+                                                                    name="description"
+                                                                    id=""
+                                                                    value={vendorData.description}
+                                                                    onChange={handleVendorChange}
+                                                                ></textarea>
                                                             </div>
                                                             <div className="col-lg-6 mt-4 mb-3">
-                                                                <button className="btn btn-success" type="submit">
+                                                                <button className="btn btn-success me-3" type="submit">
                                                                     Update Shop <i className="fas fa-check-circle" />{" "}
                                                                 </button>
                                                                 <button className="btn btn-primary" type="submit">
