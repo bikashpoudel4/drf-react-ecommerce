@@ -151,7 +151,7 @@ function StoreHeader() {
                                     <li>
                                         <Link
                                             className="dropdown-item"
-                                            to="/vendor/product/new/"
+                                            to="/vendor/add-product/"
                                         >
                                             {" "}
                                             <i className="fas fa-plus-circle"></i>{" "}
