@@ -452,7 +452,7 @@ class ProductCreateView(generics.CreateAPIView):
 
         serializer.save()
 
-        product_instance = serializer.insatance
+        product_instance = serializer.instance
 
         specifications_data = []
         colors_data = []
@@ -460,7 +460,7 @@ class ProductCreateView(generics.CreateAPIView):
         gallery_data = []
 
 
-        for key, value in self.request.data.item():
+        for key, value in self.request.data.items():
             # specification[0][title]
             if key.startswith('specifications') and '[title]' in key:
                 index = key.split('[')[1].split(']')[0]
@@ -501,4 +501,4 @@ class ProductCreateView(generics.CreateAPIView):
     def save_nested_data(self, product_instance, serializer_class, data):
         serializer = serializer_class(data=data, many=True, context={'product_instance': product_instance})
         serializer.is_valid(raise_exception=True)
-        serializer.save(Product=product_instance)
+        serializer.save(product=product_instance)

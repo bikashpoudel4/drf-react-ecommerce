@@ -3,7 +3,7 @@ import Sidebar from './Sidebar'
 import { useEffect, useState } from 'react'
 import apiInstance from '../../utils/axios'
 import UserData from '../plugin/UserData'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import moment from 'moment'
 import Swal from 'sweetalert2'
 
@@ -27,6 +27,8 @@ function AddProduct() {
     const [sizes, setSizes] = useState([{ name: '', price: '' }])
     const [gallery, setGallery] = useState([{ image: '' }])
     const [category, setCategory] = useState([])
+
+    const navigate = useNavigate()
 
     const handleAddMore = (setStateFunction) => {
         setStateFunction((prevState) => [...prevState, {}])
@@ -107,6 +109,120 @@ function AddProduct() {
         })
     }, [])
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        const formdata = new FormData()
+        Object.entries(product).forEach(([key, value]) => {
+            if (key === 'image' && value){
+                formdata.append(key, value.file)
+            } else {
+                formdata.append(key, value)
+            }
+        })
+
+        specifications.forEach((specification, index) => {
+            Object.entries(specification).forEach(([key, value]) => {
+                formdata.append(`specifications[${index}][${key}]`, value)
+            })
+        })
+
+        colors.forEach((color, index) => {
+            Object.entries(color).forEach(([key, value]) => {
+                formdata.append(`colors[${index}][${key}]`, value)
+            })
+        })
+
+        sizes.forEach((size, index) => {
+            Object.entries(size).forEach(([key, value]) => {
+                formdata.append(`sizes[${index}][${key}]`, value)
+            })
+        })
+
+        gallery.forEach((item, index) => {
+            if(item.image) {
+                formdata.append(`gallery[${index}][image]`, item.image.file)
+            }
+        })
+
+        const response = await apiInstance.post(`vendor-create-product/`, formdata, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+
+        Swal.fire({
+            icon: "success",
+            title: "Product Created Successfully.",
+            timer: 1500
+        })
+
+        
+        navigate('/vendor/products/')
+
+    }
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    
+    //     const formdata = new FormData();
+    
+    //     // Append product fields
+    //     Object.entries(product).forEach(([key, value]) => {
+    //         if (key === 'image' && value) {
+    //             formdata.append(key, value.file);
+    //         } else {
+    //             formdata.append(key, value);
+    //         }
+    //     });
+    
+    //     // Append specifications
+    //     specifications.forEach((specification, index) => {
+    //         Object.entries(specification).forEach(([key, value]) => {
+    //             if (value) {
+    //                 formdata.append(`specifications[${index}][${key}]`, value);
+    //             }
+    //         });
+    //     });
+    
+    //     // Append colors
+    //     colors.forEach((color, index) => {
+    //         Object.entries(color).forEach(([key, value]) => {
+    //             if (value) {
+    //                 formdata.append(`colors[${index}][${key}]`, value);
+    //             }
+    //         });
+    //     });
+    
+    //     // Append sizes
+    //     sizes.forEach((size, index) => {
+    //         Object.entries(size).forEach(([key, value]) => {
+    //             if (value) {
+    //                 formdata.append(`sizes[${index}][${key}]`, value);
+    //             }
+    //         });
+    //     });
+    
+    //     // Append gallery images
+    //     gallery.forEach((item, index) => {
+    //         if (item.image) {
+    //             formdata.append(`gallery[${index}][image]`, item.image.file);
+    //         }
+    //     });
+    
+    //     try {
+    //         const response = await apiInstance.post(`vendor-create-product/`, formdata, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data',
+    //             },
+    //         });
+    //         console.log('Product created successfully:', response.data);
+    //     } catch (error) {
+    //         console.error('Error creating product:', error.response?.data || error.message);
+    //     }
+    // };
+    
+
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
@@ -115,7 +231,7 @@ function AddProduct() {
 
                 <div className="col-md-9 col-lg-10 main mt-4">
                     <div className="container">
-                        <div className="main-body">
+                        <form onSubmit={handleSubmit} className="main-body">
                             <div className="tab-content" id="pills-tabContent">
                                 <div
                                     className="tab-pane fade show active"
@@ -128,12 +244,12 @@ function AddProduct() {
                                         <div className="col-md-12">
                                             <div className="card mb-3">
                                                 <div className="card-body">
-                                                    <form
+                                                    {/* <form
                                                         className="form-group"
                                                         method="POST"
                                                         noValidate=""
                                                         encType="multipart/form-data"
-                                                    >
+                                                    > */}
                                                         <div className="row text-dark">
                                                             <div className="col-lg-6 mb-2">
                                                                 <label htmlFor="" className="mb-2">
@@ -199,7 +315,7 @@ function AddProduct() {
                                                                     Sale Price
                                                                 </label>
                                                                 <input
-                                                                    type="text"
+                                                                    type="number"
                                                                     className="form-control"
                                                                     name="price"
                                                                     value={product.price || ''}
@@ -211,7 +327,7 @@ function AddProduct() {
                                                                     Regular Price
                                                                 </label>
                                                                 <input
-                                                                    type="text"
+                                                                    type="number"
                                                                     className="form-control"
                                                                     name="old_price"
                                                                     value={product.old_price || ''}
@@ -223,7 +339,7 @@ function AddProduct() {
                                                                     Shipping Amount
                                                                 </label>
                                                                 <input
-                                                                    type="text"
+                                                                    type="number"
                                                                     className="form-control"
                                                                     name="shipping_amount"
                                                                     value={product.shipping_amount || ''}
@@ -243,7 +359,7 @@ function AddProduct() {
                                                                 />
                                                             </div>
                                                         </div>
-                                                    </form>
+                                                    {/* </form> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -345,7 +461,7 @@ function AddProduct() {
                                                                     type="text"
                                                                     className="form-control"
                                                                     value={specification.content || ''}
-                                                                    onChange={(e) => handleInputChange(index, 'title', e.target.value, setSpecifications)}
+                                                                    onChange={(e) => handleInputChange(index, 'content', e.target.value, setSpecifications)}
                                                                 />
                                                             </div>
                                                             <div className="col-lg-2 mb-2">
@@ -384,13 +500,13 @@ function AddProduct() {
                                                                 <label htmlFor="" className="">
                                                                     Title
                                                                 </label>
-                                                                <input value={s.title || ''} onChange={(e) => handleInputChange(index, 'name', e.target.value, setSizes)} type="text" className="form-control" name="" id="" />
+                                                                <input value={s.title || ''} onChange={(e) => handleInputChange(index, 'title', e.target.value, setSizes)} type="text" className="form-control" name="" id="" />
                                                             </div>
                                                             <div className="col-lg-5">
                                                                 <label htmlFor="" className="">
-                                                                    Content
+                                                                    Price
                                                                 </label>
-                                                                <input value={s.price || ''} onChange={(e) => handleInputChange(index, 'name', e.target.value, setSizes)} type="text" className="form-control" name="" id="" />
+                                                                <input value={s.price || ''} onChange={(e) => handleInputChange(index, 'price', e.target.value, setSizes)} type="text" className="form-control" name="" id="" />
                                                             </div>
                                                             <div className="col-lg-2">
                                                                 <button onClick={() => handleRemove(index, setSizes)} className='btn btn-danger mt-4'>Remove</button>
@@ -449,7 +565,7 @@ function AddProduct() {
                                                                     name=""
                                                                     id=""
                                                                     value={c.color_code || ''}
-                                                                    onChange={(e) => handleInputChange(index, 'name', e.target.value, setColors)}
+                                                                    onChange={(e) => handleInputChange(index, 'color_code', e.target.value, setColors)}
                                                                 />
                                                             </div>
                                                             <div className="col-lg-2">
@@ -547,13 +663,13 @@ function AddProduct() {
                                         </li>
                                     </ul>
                                     <div className="d-flex justify-content-center mb-5">
-                                        <button className="btn btn-success w-50">
+                                        <button className="btn btn-success w-50" type='submit'>
                                             Create Product <i className="fa fa-check-circle" />{" "}
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
